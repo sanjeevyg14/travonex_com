@@ -37,7 +37,7 @@ import { format } from 'date-fns';
 // Import custom authentication hook.
 import { useAuth } from '@/hooks/use-auth';
 // Import Firestore functions.
-import { getPosts, getUsers } from '@/lib/firestore';
+import { getPublishedPosts, getUsers } from '@/lib/firestore';
 import { Post, User } from '@/lib/types';
 
 // The main component for the Blog Index Page.
@@ -59,9 +59,8 @@ export default function BlogIndexPage() {
   
   useEffect(() => {
     async function fetchData() {
-      const [posts, users] = await Promise.all([getPosts(), getUsers()]);
-      const publishedPosts = posts.filter(post => post.status === 'published');
-      setPosts(publishedPosts);
+      const [posts, users] = await Promise.all([getPublishedPosts(), getUsers()]);
+      setPosts(posts);
       setUsers(users);
     }
     fetchData();

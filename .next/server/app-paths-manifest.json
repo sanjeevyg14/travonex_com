@@ -1,8 +1,10 @@
 {
   "/blog/[slug]/page": "app/blog/[slug]/page.js",
   "/blog/admin/comments/page": "app/blog/admin/comments/page.js",
+  "/blog/admin/page": "app/blog/admin/page.js",
   "/blog/admin/stories/page": "app/blog/admin/stories/page.js",
   "/blog/page": "app/blog/page.js",
   "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/login/page": "app/login/page.js",
   "/page": "app/page.js"
 }
