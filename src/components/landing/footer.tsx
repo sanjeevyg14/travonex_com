@@ -5,6 +5,7 @@
 import React from 'react';
 import { Instagram, Linkedin } from 'lucide-react'; // Icons for social media links.
 import Link from 'next/link'; // For client-side navigation.
+import Image from 'next/image'; // For displaying images.
 
 // The main Footer component.
 export function Footer() {
@@ -30,8 +31,8 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center md:text-left">
           {/* Column 1: Logo and tagline. */}
           <div className="space-y-4 flex flex-col items-center md:items-start">
-            <Link href="/" className="font-headline text-2xl font-bold text-primary">
-              Travonex
+            <Link href="/">
+              <Image src="/travonex-logo-footer.png" alt="Travonex" width={150} height={40} />
             </Link>
             <p className="text-background/70">Plan Less. Travel More.</p>
           </div>

@@ -15,8 +15,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-// Import the mock data and the `updatePost` function to simulate database updates.
-import { mockPosts, updatePost, Post } from '@/lib/mock-data';
+// Import the Firestore functions to interact with the database.
+import { getPost, updatePost as updatePostInFirestore } from '@/lib/firestore';
+import { Post } from '@/lib/types';
 // Import the hook for showing toast notifications.
 import { useToast } from '@/hooks/use-toast';
 // Import Next.js components for navigation and images.
@@ -47,24 +48,33 @@ export default function EditPostPage() {
   // This `useEffect` hook runs when the component mounts or when the `id` parameter changes.
   // Its purpose is to fetch the post data and populate the form fields.
   useEffect(() => {
-    // Find the post in the mock data array that matches the ID from the URL.
-    const postToEdit = mockPosts.find(p => p.id === id);
-    if (postToEdit) {
-      // If the post is found, update the state.
-      setPost(postToEdit);
-      setTitle(postToEdit.title);
-      setExcerpt(postToEdit.excerpt);
-      setContent(postToEdit.content);
-      setImagePreview(postToEdit.featured_img);
-    } else {
-      // If no post is found, show an error toast and redirect the user back to the main posts list.
-      toast({
-        title: "Post not found",
-        description: "The post you are trying to edit does not exist.",
-        variant: "destructive"
-      });
-      router.push('/blog/admin/posts');
+    // If the id is not available yet, do nothing.
+    if (!id) return;
+
+    // Ensure the id is a string, as it could be a string[] for catch-all routes.
+    const postId = Array.isArray(id) ? id[0] : id;
+
+    async function fetchPost() {
+        const postToEdit = await getPost(postId);
+        if (postToEdit) {
+          // If the post is found, update the state.
+          setPost(postToEdit);
+          setTitle(postToEdit.title);
+          setExcerpt(postToEdit.excerpt);
+          setContent(postToEdit.content);
+          setImagePreview(postToEdit.featured_img);
+        } else {
+          // If no post is found, show an error toast and redirect the user back to the main posts list.
+          toast({
+            title: "Post not found",
+            description: "The post you are trying to edit does not exist.",
+            variant: "destructive"
+          });
+          router.push('/blog/admin/posts');
+        }
     }
+    
+    fetchPost();
   }, [id, router, toast]); // Dependencies for the effect.
 
   // Handler for the file input change event.
@@ -80,11 +90,11 @@ export default function EditPostPage() {
   };
 
   // Handler for the form submission.
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault(); // Prevent the default browser form submission behavior.
     if (post) {
       // Call the `updatePost` function from our mock data library to "save" the changes.
-      updatePost(post.id, {
+      await updatePostInFirestore(post.id, {
         title,
         excerpt,
         content,
@@ -117,7 +127,7 @@ export default function EditPostPage() {
       <Card>
         <CardHeader>
           <CardTitle>Edit Post</CardTitle>
-          <CardDescription>Make changes to your blog post here. Click save when you're done.</CardDescription>
+          <CardDescription>Make changes to your blog post here. Click save when you&apos;re done.</CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
             <CardContent className="space-y-6">

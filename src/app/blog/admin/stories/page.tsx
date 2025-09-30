@@ -5,14 +5,15 @@
 'use client';
 
 // Import React hooks and UI components.
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { format } from 'date-fns';
 // Import mock data and types.
-import { mockFollowUpStories as initialStories, mockUsers, mockPosts, FollowUpStory } from '@/lib/mock-data';
+import { FollowUpStory, User, Post } from '@/lib/types';
+import { getStories, getUsers, getPosts, updateStory, deleteStory as deleteStoryFromFirestore } from '@/lib/firestore';
 // Import icons for action buttons.
 import { ThumbsUp, ThumbsDown, Trash2, CheckCircle, XCircle, Send } from 'lucide-react';
 // Import Next.js components.
@@ -21,23 +22,36 @@ import Link from 'next/link';
 import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
 
-// Helper function to find user information by ID.
-const getUserInfo = (userId: string) => mockUsers.find(u => u.id === userId) || { name: 'Unknown', avatar: '' };
-
-// Helper function to find post information by ID.
-const getPostInfo = (postId: string) => mockPosts.find(p => p.id === postId) || { title: 'Unknown Post', slug: '#' };
-
 // The main component for the Admin Stories Page.
 export default function AdminStoriesPage() {
   // State to hold the list of stories, allowing for reactive UI updates.
-  const [stories, setStories] = useState<FollowUpStory[]>(initialStories);
+  const [stories, setStories] = useState<FollowUpStory[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
+  const [posts, setPosts] = useState<Post[]>([]);
   // Get user role for permission checks.
   const { userRole } = useAuth();
   // Get the toast function for user feedback.
   const { toast } = useToast();
 
+  useEffect(() => {
+    async function fetchData() {
+        const [stories, users, posts] = await Promise.all([getStories(), getUsers(), getPosts()]);
+        setStories(stories);
+        setUsers(users);
+        setPosts(posts);
+    }
+    fetchData();
+  }, []);
+
+  // Helper function to find user information by ID.
+  const getUserInfo = (userId: string) => users.find(u => u.id === userId) || { name: 'Unknown', avatar: '' };
+
+    // Helper function to find post information by ID.
+    const getPostInfo = (postId: string) => posts.find(p => p.id === postId) || { title: 'Unknown Post', slug: '#' };
+
   // Handler to change the status of a story.
-  const handleStatusChange = (storyId: string, newStatus: FollowUpStory['status']) => {
+  const handleStatusChange = async (storyId: string, newStatus: FollowUpStory['status']) => {
+    await updateStory(storyId, { status: newStatus });
     // Update the state by mapping over the stories array.
     setStories(stories.map(s => 
       s.id === storyId ? { ...s, status: newStatus } : s
@@ -50,7 +64,8 @@ export default function AdminStoriesPage() {
   };
   
   // Handler to delete a story.
-  const handleDelete = (storyId: string) => {
+  const handleDelete = async (storyId: string) => {
+      await deleteStoryFromFirestore(storyId);
       // Update state by filtering out the deleted story.
       setStories(stories.filter(s => s.id !== storyId));
       // Show a destructive toast.

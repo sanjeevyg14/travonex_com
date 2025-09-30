@@ -1,68 +1,74 @@
 // This file creates the page for moderating user-submitted comments in the admin dashboard.
-// It allows admins and editors to approve, reject, or delete comments.
+// It displays a table of comments and allows an admin to approve, reject, or delete them.
 
-// The 'use client' directive is necessary because this is a Client Component.
-// It uses React hooks like `useState` and handles user interactions (button clicks),
-// which can only be done on the client-side.
+// This is a Client Component because it uses `useState` for state management and handles user interactions.
 'use client';
 
-// Import React hooks for state management.
-import { useState } from 'react';
-// Import UI components from the ShadCN library.
+// Import React hooks and UI components.
+import { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-// Import date formatting utility.
 import { format } from 'date-fns';
-// Import mock data and types. In a real app, this would be an API client.
-import { mockComments as initialComments, mockUsers, mockPosts, Comment } from '@/lib/mock-data';
-// Import icons for the action buttons.
+// Import mock data and types.
+import { Comment, User, Post } from '@/lib/types';
+import { getComments, getUsers, getPosts, updateComment, deleteComment as deleteCommentFromFirestore } from '@/lib/firestore';
+// Import icons for action buttons.
 import { ThumbsUp, ThumbsDown, Trash2, CheckCircle, XCircle, Send } from 'lucide-react';
-// Import the Next.js Link component for navigation.
+// Import Next.js components.
 import Link from 'next/link';
-// Import the custom authentication hook to get user role and information.
+// Import custom hooks.
 import { useAuth } from '@/hooks/use-auth';
-// Import the custom hook for showing toast notifications.
 import { useToast } from '@/hooks/use-toast';
-
-// Helper function to find user information by ID from the mock data.
-// This centralizes the logic for retrieving user details.
-const getUserInfo = (userId: string) => mockUsers.find(u => u.id === userId) || { name: 'Unknown', avatar: '' };
-
-// Helper function to find post information by ID from the mock data.
-// Used to link comments back to the original article.
-const getPostInfo = (postId: string) => mockPosts.find(p => p.id === postId) || { title: 'Unknown Post', slug: '#' };
 
 // The main component for the Admin Comments Page.
 export default function AdminCommentsPage() {
-  // State to hold the list of comments. It's initialized with the mock data.
-  // Using state allows the UI to reactively update when comments are approved, rejected, or deleted.
-  const [comments, setComments] = useState<Comment[]>(initialComments);
-  // Get the current user's role from the auth hook to control permissions (e.g., only admins can delete).
+  // State to hold the list of comments, allowing for reactive UI updates.
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
+  const [posts, setPosts] = useState<Post[]>([]);
+  // Get user role for permission checks.
   const { userRole } = useAuth();
-  // Get the `toast` function to show feedback to the user after an action.
+  // Get the toast function for user feedback.
   const { toast } = useToast();
 
-  // Handler function to change the status of a comment.
-  const handleStatusChange = (commentId: string, newStatus: Comment['status']) => {
-    // Update the `comments` state by mapping over the array.
-    // If a comment's ID matches, its status is updated. Otherwise, it remains unchanged.
+    useEffect(() => {
+        async function fetchData() {
+            const [comments, users, posts] = await Promise.all([getComments(), getUsers(), getPosts()]);
+            setComments(comments);
+            setUsers(users);
+            setPosts(posts);
+        }
+        fetchData();
+    }, []);
+
+    // Helper function to find user information by ID.
+    const getUserInfo = (userId: string) => users.find(u => u.id === userId) || { name: 'Unknown', avatar: '' };
+
+    // Helper function to find post information by ID.
+    const getPostInfo = (postId: string) => posts.find(p => p.id === postId) || { title: 'Unknown Post', slug: '#' };
+
+  // Handler to change the status of a comment.
+  const handleStatusChange = async (commentId: string, newStatus: Comment['status']) => {
+    await updateComment(commentId, { status: newStatus });
+    // Update the state by mapping over the comments array.
     setComments(comments.map(c => 
       c.id === commentId ? { ...c, status: newStatus } : c
     ));
-    // Show a success notification to the moderator.
+    // Show a success toast.
     toast({
         title: "Comment Updated",
         description: `The comment has been ${newStatus}.`
     });
   };
   
-  // Handler function to delete a comment.
-  const handleDelete = (commentId: string) => {
-      // Update the `comments` state by filtering out the comment with the matching ID.
+  // Handler to delete a comment.
+  const handleDelete = async (commentId: string) => {
+      await deleteCommentFromFirestore(commentId);
+      // Update state by filtering out the deleted comment.
       setComments(comments.filter(c => c.id !== commentId));
-      // Show a destructive notification to confirm the deletion.
+      // Show a destructive toast.
       toast({
         title: "Comment Deleted",
         description: "The comment has been permanently removed.",
@@ -70,11 +76,10 @@ export default function AdminCommentsPage() {
     });
   }
 
-  // A helper component to render the correct badge based on the comment's status.
-  // This makes the main render method cleaner and easier to read.
+  // A helper component to render the correct status badge.
   const getStatusBadge = (status: Comment['status']) => {
     switch (status) {
-      case 'approved':
+       case 'approved':
         return <Badge className="bg-green-100 text-green-800 border-green-200 hover:bg-green-200"><CheckCircle className="mr-1 h-3 w-3" />Approved</Badge>;
       case 'pending':
         return <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200 hover:bg-yellow-200"><Send className="mr-1 h-3 w-3" />Pending</Badge>;
@@ -85,7 +90,7 @@ export default function AdminCommentsPage() {
     }
   };
 
-  // The JSX structure for the page.
+  // The JSX for the page layout.
   return (
     <Card>
       <CardHeader>
@@ -105,41 +110,40 @@ export default function AdminCommentsPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {/* Map over the `comments` state array to render a row for each comment. */}
+            {/* Map over the comments array to render a row for each one. */}
             {comments.map(comment => {
-              // Retrieve author and post info for the current comment in the loop.
               const author = getUserInfo(comment.userId);
               const post = getPostInfo(comment.postId);
               return (
                 <TableRow key={comment.id}>
                   <TableCell className="font-medium">{author.name}</TableCell>
-                  <TableCell className="text-muted-foreground">{comment.comment_text}</TableCell>
+                  {/* `truncate` and `max-w-xs` are Tailwind classes to prevent long text from breaking the layout. */}
+                  <TableCell className="text-muted-foreground truncate max-w-xs">{comment.comment_text}</TableCell>
                   <TableCell>
-                    {/* Link to the original blog post so the moderator can see the context. */}
+                    {/* Link to the original post for context. */}
                     <Link href={`/blog/${post.slug}`} className="hover:underline" target="_blank">
                       {post.title}
                     </Link>
                   </TableCell>
                   <TableCell>
-                    {/* Render the status badge using the helper component. */}
                     {getStatusBadge(comment.status)}
                   </TableCell>
                   <TableCell>{format(new Date(comment.created_at), 'yyyy-MM-dd')}</TableCell>
                   <TableCell className="text-right">
                     <div className="flex gap-2 justify-end">
-                        {/* Conditionally render the 'Approve' button if the status is not already 'approved'. */}
+                        {/* Conditionally render the 'Approve' button. */}
                         {comment.status !== 'approved' && (
                             <Button variant="outline" size="icon" title="Approve" onClick={() => handleStatusChange(comment.id, 'approved')}>
                                 <ThumbsUp className="h-4 w-4 text-green-600" />
                             </Button>
                         )}
-                        {/* Conditionally render the 'Reject' button if the status is not already 'rejected'. */}
+                        {/* Conditionally render the 'Reject' button. */}
                         {comment.status !== 'rejected' && (
                             <Button variant="outline" size="icon" title="Reject" onClick={() => handleStatusChange(comment.id, 'rejected')}>
                                 <ThumbsDown className="h-4 w-4 text-red-600" />
                             </Button>
                         )}
-                        {/* Conditionally render the 'Delete' button only if the logged-in user is an admin. */}
+                        {/* Only admins can see the 'Delete' button. */}
                         {userRole === 'admin' && (
                             <Button variant="ghost" size="icon" className="text-destructive hover:bg-red-100" title="Delete" onClick={() => handleDelete(comment.id)}>
                                 <Trash2 className="h-4 w-4" />

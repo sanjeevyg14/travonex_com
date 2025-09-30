@@ -21,9 +21,11 @@ module.exports = mod;
 
 var { g: global, __dirname } = __turbopack_context__;
 {
-// This file implements Next.js Middleware.
-// Middleware allows you to run code on the server before a request is completed.
-// It's useful for things like authentication, A/B testing, redirects, and more.
+// This file configures the middleware for the Next.js application.
+// Middleware allows you to run code before a request is completed. 
+// Based on the incoming request, you can modify the response by rewriting, redirecting, 
+// modifying headers, or streaming.
+// Import the necessary types from Next.js.
 __turbopack_context__.s({
     "config": (()=>config),
     "middleware": (()=>middleware)
@@ -32,36 +34,25 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$esm$2f$server$2f$web$2f$spec$2d$extension$2f$response$2e$js__$5b$middleware$2d$edge$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/esm/server/web/spec-extension/response.js [middleware-edge] (ecmascript)");
 ;
 function middleware(request) {
-    // In its current state, this middleware does nothing but pass the request along.
-    // It's a placeholder for future logic.
-    // A real-world authentication check might look something like this:
-    //
-    // 1. Get the session token from the request cookies.
-    // const sessionCookie = request.cookies.get('session');
-    //
-    // 2. If the cookie doesn't exist, redirect to the login page.
-    // if (!sessionCookie) {
-    //   const loginUrl = new URL('/login', request.url);
-    //   return NextResponse.redirect(loginUrl);
+    // This is a placeholder for actual middleware logic.
+    // For example, you could check for an authentication token in the cookies
+    // and redirect unauthenticated users from protected routes.
+    // Example: Protecting a route
+    // const authToken = request.cookies.get('auth-token');
+    // const { pathname } = request.nextUrl;
+    // if (pathname.startsWith('/dashboard') && !authToken) {
+    //   const url = request.nextUrl.clone();
+    //   url.pathname = '/login';
+    //   return NextResponse.redirect(url);
     // }
-    //
-    // 3. Verify the token with a backend service (e.g., Firebase Auth).
-    // const isValid = await verifyToken(sessionCookie.value);
-    //
-    // 4. If the token is invalid, redirect to login.
-    // if (!isValid) {
-    //   ...
-    // }
-    // `NextResponse.next()` continues the request lifecycle.
+    // If no redirection or modification is needed, just pass the request through.
     return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$esm$2f$server$2f$web$2f$spec$2d$extension$2f$response$2e$js__$5b$middleware$2d$edge$5d$__$28$ecmascript$29$__["NextResponse"].next();
 }
 const config = {
-    // The `matcher` property takes an array of path patterns.
-    // Here, it's configured to run for any path inside `/blog/admin` and `/dashboard`.
-    // The `:path*` part is a wildcard that matches all sub-paths.
+    // This matcher applies the middleware to all routes except for those that are
+    // typically static files or internal Next.js assets.
     matcher: [
-        '/blog/admin/:path*',
-        '/dashboard/:path*'
+        '/((?!api|_next/static|_next/image|favicon.ico).*)'
     ]
 };
 }}),

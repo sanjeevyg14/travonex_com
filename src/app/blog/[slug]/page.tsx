@@ -1,3 +1,4 @@
+
 // This file represents the dynamic route for a single blog post page.
 // The [slug] part in the filename indicates that it will match any URL like /blog/my-first-post.
 
@@ -16,20 +17,21 @@ import { Button } from '@/components/ui/button'; // The standard button componen
 import Link from 'next/link'; // The Next.js component for client-side navigation.
 import { Card, CardContent, CardHeader } from '@/components/ui/card'; // UI components for card layouts.
 import { InteractiveSection } from '@/components/blog/interactive-section'; // The component for comments and stories.
-import { mockPosts, mockUsers } from '@/lib/mock-data'; // The mock data source for posts and users.
-
+import { getPosts, getUsers } from '@/lib/firestore'; // The Firestore data source for posts and users.
 
 // An asynchronous function to retrieve a single blog post from the mock data based on its slug.
 // In a real application, this would fetch data from a database.
 async function getBlogPostBySlug(slug: string) {
+    const posts = await getPosts();
     // Find the post in the `mockPosts` array where the slug matches the provided slug.
-    const post = mockPosts.find(p => p.slug === slug);
+    const post = posts.find(p => p.slug === slug);
     // If the post is not found or is not 'published', return null. This prevents drafts from being viewed publicly.
     if (!post || post.status !== 'published') {
         return null;
     }
+    const users = await getUsers();
     // Find the author of the post in the `mockUsers` array.
-    const author = mockUsers.find(u => u.id === post.authorId);
+    const author = users.find(u => u.id === post.authorId);
     // Return the post data combined with the author's name and avatar.
     return { ...post, authorName: author?.name || 'Unknown', authorAvatar: author?.avatar };
 }
@@ -37,8 +39,9 @@ async function getBlogPostBySlug(slug: string) {
 // An asynchronous function to get a few related posts.
 // This is based on the category of the current post, excluding the current post itself.
 async function getRelatedPosts(categoryId: string | null, currentPostId: string) {
+    const posts = await getPosts();
     // Filter `mockPosts` to find posts that are 'published', in the same category, and are not the current post.
-    return mockPosts.filter(p => p.status === 'published' && p.category === categoryId && p.id !== currentPostId).slice(0, 3); // Limit to 3 related posts.
+    return posts.filter(p => p.status === 'published' && p.category === categoryId && p.id !== currentPostId).slice(0, 3); // Limit to 3 related posts.
 }
 
 // Define the type for the props that this page component will receive from Next.js.
@@ -51,7 +54,6 @@ type Props = {
 // This is crucial for SEO, as it sets the <title> and <meta> tags in the page's <head>.
 export async function generateMetadata(
   { params }: Props,
-  parent: ResolvingMetadata // Access to metadata from parent layouts.
 ): Promise<Metadata> {
   // Fetch the post data using the slug from the URL parameters.
   const post = await getBlogPostBySlug(params.slug);

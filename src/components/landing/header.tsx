@@ -8,6 +8,7 @@
 // Import necessary components and hooks.
 import { Menu, X, LayoutDashboard, LogOut, Newspaper } from 'lucide-react'; // Icons.
 import Link from 'next/link'; // For client-side navigation.
+import Image from 'next/image'; // For displaying images.
 import { Button } from '@/components/ui/button'; // The standard button component.
 import { useState } from 'react'; // React hook for state management.
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet'; // Components for the mobile menu drawer.
@@ -44,8 +45,8 @@ export function Header() {
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-20 items-center justify-between">
         {/* The site logo, linking to the homepage. */}
-        <Link href="/" className="font-headline text-2xl font-bold text-primary">
-          Travonex
+        <Link href="/">
+          <Image src="/travonex-logo.png" alt="Travonex" width={150} height={40} />
         </Link>
         
         {/* The desktop navigation menu. It is hidden on small screens (`hidden md:flex`). */}
@@ -132,8 +133,8 @@ export function Header() {
                 <SheetContent side="right" className="w-full max-w-xs bg-background">
                 <div className="flex flex-col h-full p-6">
                     <div className="flex items-center justify-between mb-8">
-                        <Link href="/" className="font-headline text-2xl font-bold text-primary" onClick={() => setIsOpen(false)}>
-                        Travonex
+                        <Link href="/" onClick={() => setIsOpen(false)}>
+                          <Image src="/travonex-logo.png" alt="Travonex" width={150} height={40} />
                         </Link>
                         <SheetClose asChild>
                         <Button variant="ghost" size="icon" aria-label="Close menu">

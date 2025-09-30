@@ -1,2 +1,78 @@
+rules_version = '2';
 
-// This file is intentionally left blank as Firebase is not being used in the current local setup.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // --- Helper Functions ---
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isUser(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function getUserData(userId) {
+      return get(/databases/$(database)/documents/users/$(userId)).data;
+    }
+
+    function isRole(role) {
+        return isAuthenticated() && getUserData(request.auth.uid).role == role;
+    }
+
+    function isOneOfRoles(roles) {
+        return isAuthenticated() && getUserData(request.auth.uid).role in roles;
+    }
+
+    function isAdmin() {
+      return isOneOfRoles(['admin']);
+    }
+
+    function isEditor() {
+        return isOneOfRoles(['editor']);
+    }
+
+    function isModerator() {
+      return isOneOfRoles(['admin', 'editor']);
+    }
+
+    // --- Collection Rules ---
+
+    // Users collection
+    match /users/{userId} {
+      allow read: if isUser(userId) || isAdmin();
+      allow create: if isUser(userId);
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // Posts collection
+    match /posts/{postId} {
+      allow read: if resource.data.status == 'published' || isModerator();
+      allow create: if isAuthenticated();
+      allow update: if isModerator() || (isUser(resource.data.authorId) && request.resource.data.status == 'draft');
+      allow delete: if isAdmin();
+    }
+
+    // Comments and Stories collections
+    match /{collection}/{docId} where collection in ['comments', 'stories'] {
+       allow read: if resource.data.status == 'approved' || isModerator();
+       allow create: if isAuthenticated();
+       allow update: if isModerator() || isUser(resource.data.userId);
+       allow delete: if isModerator() || isUser(resource.data.userId);
+    }
+
+    // Early Access Users collection
+    match /earlyAccessUsers/{userId} {
+        allow create: if true;
+        allow read, update, delete: if isAdmin();
+    }
+
+    // Newsletter Subscribers collection
+    match /newsletterSubscribers/{subscriberId} {
+        allow create: if true;
+        allow read, update, delete: if isAdmin();
+    }
+  }
+}

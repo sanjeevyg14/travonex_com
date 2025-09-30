@@ -1,19 +1,106 @@
 // This file creates the page where users can submit a new blog post for review.
 // It contains a form for the title, excerpt, content, and a featured image.
+'use client';
 
-// Import UI components.
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-// Import layout components.
 import { Header } from "@/components/landing/header";
 import { Footer } from "@/components/landing/footer";
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
+import { useAuth } from '@/hooks/use-auth';
+import { addPost } from '@/lib/firestore';
+import { useToast } from '@/hooks/use-toast';
+import { useRouter } from 'next/navigation';
+import { uploadImage } from '@/lib/storage';
+import Image from 'next/image';
+import { useState } from 'react';
 
-// Note: This is a simple presentational component. It doesn't use any hooks yet,
-// but it would be converted to a 'use client' component to handle form state and submission.
+const formSchema = z.object({
+    title: z.string().min(1, "Title is required"),
+    excerpt: z.string().min(1, "Excerpt is required"),
+    content: z.string().min(1, "Content is required"),
+    image: z.any().optional(),
+});
+
 export default function SubmitStoryPage() {
+    const { user } = useAuth();
+    const { toast } = useToast();
+    const router = useRouter();
+    const [imagePreview, setImagePreview] = useState<string | null>(null);
+
+    const form = useForm({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            title: "",
+            excerpt: "",
+            content: "",
+            image: undefined,
+        },
+    });
+
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImagePreview(reader.result as string);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    async function onSubmit(values: z.infer<typeof formSchema>) {
+        if (!user) {
+            toast({
+                title: "Error",
+                description: "You must be logged in to submit a story.",
+                variant: "destructive",
+            });
+            return;
+        }
+
+        try {
+            let imageUrl = '';
+            if (values.image && values.image[0]) {
+                const file = values.image[0];
+                const path = `posts/${user.uid}/${file.name}`;
+                imageUrl = await uploadImage(file, path);
+            }
+
+            await addPost({
+                ...values,
+                authorId: user.uid,
+                status: 'pending',
+                slug: values.title.toLowerCase().replace(/\s+/g, '-'),
+                featured_img: imageUrl,
+                imageHint: '',
+                category: '',
+                tags: [],
+                created_at: new Date(),
+                updated_at: new Date(),
+            });
+
+            toast({
+                title: "Success",
+                description: "Your story has been submitted for review.",
+            });
+
+            router.push('/dashboard');
+        } catch (error) {
+            toast({
+                title: "Error",
+                description: "Something went wrong. Please try again.",
+                variant: "destructive",
+            });
+        }
+    }
+
   return (
      <div className="flex flex-col min-h-dvh bg-background">
       <Header />
@@ -25,30 +112,77 @@ export default function SubmitStoryPage() {
                 <CardDescription>Share your adventures with the Travonex community.</CardDescription>
             </CardHeader>
             <CardContent>
-                {/* In a real application, this form would be managed by a library like `react-hook-form`. */}
-                <form className="space-y-6">
-                    <div>
-                        <Label htmlFor="title">Title</Label>
-                        <Input id="title" placeholder="e.g., My Amazing Trip to the Mountains" />
-                    </div>
-                     <div>
-                        <Label htmlFor="excerpt">Excerpt</Label>
-                        <Textarea id="excerpt" placeholder="A short summary of your story..." />
-                    </div>
-                     <div>
-                        <Label htmlFor="content">Your Story</Label>
-                        <Textarea id="content" placeholder="Tell us all about it..." className="min-h-[200px]" />
-                    </div>
-                     <div>
-                        <Label htmlFor="image">Featured Image</Label>
-                        <Input id="image" type="file" />
-                        <p className="text-sm text-muted-foreground mt-2">Upload a high-quality image for your story.</p>
-                    </div>
-                     <div className="flex justify-end">
-                        {/* The `type="submit"` button would trigger the form's `onSubmit` handler. */}
-                        <Button type="submit">Submit for Review</Button>
-                    </div>
-                </form>
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                        <FormField
+                            control={form.control}
+                            name="title"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <Label>Title</Label>
+                                    <FormControl>
+                                        <Input placeholder="e.g., My Amazing Trip to the Mountains" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="excerpt"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <Label>Excerpt</Label>
+                                    <FormControl>
+                                        <Textarea placeholder="A short summary of your story..." {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="content"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <Label>Your Story</Label>
+                                    <FormControl>
+                                        <Textarea placeholder="Tell us all about it..." className="min-h-[200px]" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="image"
+                            render={({ field: { onChange, onBlur, name, ref } }) => (
+                                <FormItem>
+                                    <Label>Featured Image</Label>
+                                    <FormControl>
+                                        <Input 
+                                            type="file" 
+                                            name={name}
+                                            ref={ref}
+                                            onBlur={onBlur}
+                                            onChange={(e) => {
+                                                onChange(e.target.files);
+                                                handleImageChange(e);
+                                            }}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        {imagePreview && (
+                            <Image src={imagePreview} alt="Image preview" width={200} height={200} />
+                        )}
+                        <div className="flex justify-end">
+                            <Button type="submit">Submit for Review</Button>
+                        </div>
+                    </form>
+                </Form>
             </CardContent>
            </Card>
         </div>

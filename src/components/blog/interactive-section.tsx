@@ -14,7 +14,6 @@ import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import {
   Accordion,
@@ -39,10 +38,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 // Import utilities and mock data.
 import { format } from 'date-fns';
-import { mockComments, mockFollowUpStories, mockUsers, addComment, addFollowUpStory, Comment, FollowUpStory } from '@/lib/mock-data';
-
-// Helper function to find a user's details by their ID from the mock data.
-const getUser = (userId: string) => mockUsers.find(u => u.id === userId);
+import { getComments, getStories, addComment, addStory } from '@/lib/firestore';
+import { Comment, FollowUpStory, User } from '@/lib/types';
 
 // The main component for the interactive section.
 export function InteractiveSection({ articleId }: { articleId: string }) {
@@ -52,15 +49,22 @@ export function InteractiveSection({ articleId }: { articleId: string }) {
     // This allows the component to be dynamic and update if the data changes.
     const [comments, setComments] = useState<Comment[]>([]);
     const [stories, setStories] = useState<FollowUpStory[]>([]);
+    const [users, setUsers] = useState<User[]>([]);
 
     // This `useEffect` hook filters the mock data to get the relevant comments and stories for this article.
     // It runs whenever the `articleId` prop changes.
     useEffect(() => {
-        // Filter for 'approved' comments and stories only, as this is the public-facing view.
-        setComments(mockComments.filter(c => c.postId === articleId && c.status === 'approved'));
-        setStories(mockFollowUpStories.filter(s => s.postId === articleId && s.status === 'approved'));
+        async function fetchData() {
+            const [comments, stories] = await Promise.all([getComments(articleId), getStories(articleId)]);
+            setComments(comments.filter(c => c.status === 'approved'));
+            setStories(stories.filter(s => s.status === 'approved'));
+        }
+        fetchData();
     }, [articleId]); // Dependency array.
     
+    // Helper function to find a user's details by their ID from the mock data.
+    const getUser = (userId: string) => users.find(u => u.id === userId);
+
     // This function is passed down to the submission modal. In a real app with live data,
     // it would be used to trigger a re-fetch of the comments/stories to update the UI.
     // For the mock setup, a toast is sufficient since new submissions are 'pending' and won't show here anyway.
@@ -206,7 +210,7 @@ function SubmissionModal({ type, articleId, onSubmission }: { type: 'comment' | 
     }
 
     // Handler for form submission.
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!content.trim() || !user) {
             toast({ title: 'Content cannot be empty.', variant: 'destructive' });
@@ -215,18 +219,22 @@ function SubmissionModal({ type, articleId, onSubmission }: { type: 'comment' | 
 
         // Call the appropriate mock data function based on the type.
         if (isComment) {
-            addComment({
+            await addComment({
                 postId: articleId,
                 userId: user.uid,
                 comment_text: content,
                 image_url: imagePreview || undefined, // Use the preview URL for the mock.
+                status: 'pending',
+                created_at: new Date()
             });
         } else {
-            addFollowUpStory({
+            await addStory({
                 postId: articleId,
                 userId: user.uid,
                 story_text: content,
                 image_url: imagePreview || undefined,
+                status: 'pending',
+                created_at: new Date()
             });
         }
         

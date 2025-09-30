@@ -102,68 +102,53 @@ export default function AdminLayout({
 
   // If the user is authenticated and authorized, render the full admin layout.
   return (
-    <SidebarProvider>
-        <Sidebar>
-          <SidebarHeader>
-            <Link href="/blog/admin">
-              <h2 className="text-2xl font-bold font-headline text-primary">Travonex Admin</h2>
+    <div className="grid min-h-screen w-full lg:grid-cols-[280px_1fr]">
+      <div className="hidden border-r bg-gray-100/40 lg:block dark:bg-gray-800/40">
+        <div className="flex h-full max-h-screen flex-col gap-2">
+          <div className="flex h-[60px] items-center border-b px-6">
+            <Link href="/blog/admin" className="flex items-center gap-2 font-semibold">
+              <span className="">Travonex Admin</span>
             </Link>
-          </SidebarHeader>
-          <SidebarContent>
-            <SidebarMenu>
-              {/* Map over the `navItems` array to render the sidebar menu. */}
+          </div>
+          <div className="flex-1 overflow-auto py-2">
+            <nav className="grid items-start px-4 text-sm font-medium">
               {navItems.map((item) => (
-                // Only render the menu item if the current user's role is included in the item's `roles` array.
                 item.roles.includes(userRole!) && (
-                  <SidebarMenuItem key={item.label}>
-                    <SidebarMenuButton href={item.href} asChild isActive={pathname === item.href}>
-                      <Link href={item.href}>
+                    <Link
+                        key={item.label}
+                        href={item.href}
+                        className={`flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50 ${
+                            pathname === item.href ? "bg-gray-200/50 text-gray-900 dark:bg-gray-800/50 dark:text-gray-50" : ""
+                        }`}>
                         {item.icon}
-                        <span>{item.label}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
+                        {item.label}
+                    </Link>
                 )
               ))}
-            </SidebarMenu>
-          </SidebarContent>
-          <SidebarFooter>
-            <SidebarMenu>
-                {/* Display the current user's avatar and name in the footer. */}
-                {user && (
-                    <SidebarMenuItem>
-                        <SidebarMenuButton>
-                            <Avatar className="h-8 w-8">
-                                <AvatarImage src={user.photoURL || ''} />
-                                <AvatarFallback>{user.displayName?.charAt(0) || user.email?.charAt(0)}</AvatarFallback>
-                            </Avatar>
-                            <span>{user.displayName || user.email}</span>
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
-                )}
-                {/* The logout button. */}
-                <SidebarMenuItem>
-                    <SidebarMenuButton onClick={() => logout()}>
-                        <LogOut/>
-                        <span>Logout</span>
-                    </SidebarMenuButton>
-                </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarFooter>
-        </Sidebar>
-      {/* The `SidebarInset` contains the main content area to the right of the sidebar. */}
-      <SidebarInset>
-        <header className="flex items-center justify-between p-4 border-b">
-            <div className="flex items-center gap-4">
-                <SidebarTrigger/> {/* The hamburger menu icon for mobile. */}
-                <h1 className="text-xl font-semibold">{getPageTitle()}</h1>
-            </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+      <div className="flex flex-col">
+        <header className="flex h-14 lg:h-[60px] items-center gap-4 border-b bg-gray-100/40 px-6 dark:bg-gray-800/40">
+          <Link href="#" className="lg:hidden">
+            <span className="sr-only">Home</span>
+          </Link>
+          <div className="w-full flex-1">
+            <h1 className="text-lg font-semibold">{getPageTitle()}</h1>
+          </div>
+          <Button variant="outline" size="sm" onClick={() => logout()}>Logout</Button>
+          {user && (
+            <Avatar className="h-9 w-9">
+              <AvatarImage src={user.photoURL || ''} />
+              <AvatarFallback>{user.displayName?.charAt(0) || user.email?.charAt(0)}</AvatarFallback>
+            </Avatar>
+          )}
         </header>
-        <main className="p-4 md:p-6 lg:p-8">
-            {/* The `children` prop here is where the actual page content (e.g., the posts table) will be rendered. */}
-            {children}
+        <main className="flex-1 p-4 sm:px-6 sm:py-0 md:gap-8">
+          {children}
         </main>
-      </SidebarInset>
-    </SidebarProvider>
+      </div>
+    </div>
   );
 }

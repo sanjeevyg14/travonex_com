@@ -6,7 +6,7 @@
 'use client';
 
 // Import React hooks.
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 // Import UI components.
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
@@ -17,32 +17,37 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuIte
 import { PlusCircle, MoreHorizontal, CheckCircle, XCircle, Send, Trash2, Archive, Eye } from "lucide-react";
 // Import date formatting utility.
 import { format } from 'date-fns';
-// Import mock data and data manipulation functions.
-import { mockPosts as initialPosts, mockUsers, Post, deletePost } from '@/lib/mock-data';
+// Import Firestore functions.
+import { getPosts, updatePost, deletePost as deletePostFromFirestore } from '@/lib/firestore';
+import { Post } from '@/lib/types';
 // Import custom hooks for authentication and notifications.
 import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
 // Import Next.js Link component.
 import Link from 'next/link';
 
-// Helper function to get an author's name from their ID.
-const getAuthorName = (authorId: string) => {
-    const user = mockUsers.find(u => u.id === authorId);
-    return user ? user.name : 'Unknown Author';
-};
-
 // The main component for the Admin Posts page.
 export default function AdminPostsPage() {
   // State to hold the list of posts, initialized with data from the mock file.
   // Using state allows the UI to update instantly when a post's status changes or it's deleted.
-  const [posts, setPosts] = useState<Post[]>(initialPosts);
+  const [posts, setPosts] = useState<Post[]>([]);
   // Get the current user's role to control access to actions (e.g., only admins can delete).
   const { userRole } = useAuth();
   // Get the toast function for user feedback.
   const { toast } = useToast();
 
+  useEffect(() => {
+    async function fetchPosts() {
+      const posts = await getPosts();
+      setPosts(posts);
+    }
+    fetchPosts();
+  }, []);
+
   // Handler to change the status of a post (e.g., from 'pending' to 'published').
-  const handleStatusChange = (postId: string, newStatus: Post['status']) => {
+  const handleStatusChange = async (postId: string, newStatus: Post['status']) => {
+    // Update the post in Firestore.
+    await updatePost(postId, { status: newStatus });
     // Update the local `posts` state.
     setPosts(posts.map(post => 
       post.id === postId ? { ...post, status: newStatus, updated_at: new Date() } : post
@@ -55,9 +60,9 @@ export default function AdminPostsPage() {
   };
 
   // Handler to delete a post.
-  const handleDelete = (postId: string) => {
+  const handleDelete = async (postId: string) => {
       // Call the `deletePost` function from the mock data library to update the "source of truth".
-      deletePost(postId); 
+      await deletePostFromFirestore(postId); 
       // Update the local state to remove the post from the UI immediately.
       setPosts(currentPosts => currentPosts.filter(post => post.id !== postId));
       // Show a destructive toast to confirm the deletion.
@@ -114,7 +119,7 @@ export default function AdminPostsPage() {
               <TableRow key={post.id}>
                 <TableCell className="font-medium">{post.title}</TableCell>
                 <TableCell>{getStatusBadge(post.status)}</TableCell>
-                <TableCell>{getAuthorName(post.authorId)}</TableCell>
+                <TableCell>Coming soon</TableCell>
                 <TableCell>{format(new Date(post.updated_at), 'yyyy-MM-dd')}</TableCell>
                 <TableCell className="text-right">
                     {/* The DropdownMenu component contains all actions for a single post. */}

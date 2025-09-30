@@ -36,23 +36,9 @@ import { Search, LogIn, PlusCircle, LayoutDashboard, Newspaper, LogOut } from 'l
 import { format } from 'date-fns';
 // Import custom authentication hook.
 import { useAuth } from '@/hooks/use-auth';
-// Import mock data.
-import { mockPosts, mockUsers } from '@/lib/mock-data';
-
-// Helper function to get an author's name from their ID.
-const getAuthorName = (authorId: string) => {
-    const user = mockUsers.find(u => u.id === authorId);
-    return user ? user.name : 'Unknown Author';
-};
-
-// Pre-process the posts: filter for 'published' status and add the author's name.
-// This is done once outside the component to avoid re-calculating on every render.
-const publishedPosts = mockPosts
-  .filter(post => post.status === 'published')
-  .map(post => ({
-    ...post,
-    authorName: getAuthorName(post.authorId),
-  }));
+// Import Firestore functions.
+import { getPosts, getUsers } from '@/lib/firestore';
+import { Post, User } from '@/lib/types';
 
 // The main component for the Blog Index Page.
 export default function BlogIndexPage() {
@@ -62,28 +48,46 @@ export default function BlogIndexPage() {
   
   // State to hold the posts that are currently displayed on the page.
   // This can be the full list or a filtered list based on the search term.
-  const [posts, setPosts] = useState(publishedPosts);
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
+  const [filteredPosts, setFilteredPosts] = useState<Post[]>([]);
 
   // Get user authentication status and functions from the custom `useAuth` hook.
   const { user, loading, logout, userRole } = useAuth();
   // Get the router instance for programmatic navigation.
   const router = useRouter();
   
+  useEffect(() => {
+    async function fetchData() {
+      const [posts, users] = await Promise.all([getPosts(), getUsers()]);
+      const publishedPosts = posts.filter(post => post.status === 'published');
+      setPosts(publishedPosts);
+      setUsers(users);
+    }
+    fetchData();
+  }, []);
+
+  // Helper function to get an author's name from their ID.
+  const getAuthorName = (authorId: string) => {
+      const user = users.find(u => u.id === authorId);
+      return user ? user.name : 'Unknown Author';
+  };
+
   // This `useEffect` hook handles the search functionality.
   // It runs whenever the `searchTerm` from the URL changes.
   useEffect(() => {
     if (searchTerm) {
       // If there is a search term, filter the `publishedPosts` array.
-      const filteredPosts = publishedPosts.filter(post =>
+      const filtered = posts.filter(post =>
         post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         post.excerpt.toLowerCase().includes(searchTerm.toLowerCase())
       );
-      setPosts(filteredPosts);
+      setFilteredPosts(filtered);
     } else {
       // If the search term is empty, show all published posts.
-      setPosts(publishedPosts);
+      setFilteredPosts(posts);
     }
-  }, [searchTerm]); // The effect depends on the `searchTerm`.
+  }, [searchTerm, posts]); // The effect depends on the `searchTerm`.
   
   // Handler for the "Add Your Story" button.
   // It checks if the user is logged in before redirecting.
@@ -215,9 +219,9 @@ export default function BlogIndexPage() {
         <section className="py-24 md:py-32">
           <div className="container mx-auto">
              {/* Conditionally render the posts grid or a "No Posts Found" message. */}
-             {posts.length > 0 ? (
+             {filteredPosts.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {posts.map((post) => (
+                {filteredPosts.map((post) => (
                     <Link href={`/blog/${post.slug}`} key={post.slug}>
                     <Card className="overflow-hidden h-full group cursor-pointer shadow-lg hover:shadow-2xl transition-shadow duration-300 rounded-2xl border-none">
                         <CardHeader className="p-0">
@@ -241,7 +245,7 @@ export default function BlogIndexPage() {
                         <h2 className="text-xl font-bold font-headline group-hover:text-primary transition-colors">{post.title}</h2>
                         <p className="mt-2 text-muted-foreground line-clamp-3">{post.excerpt}</p>
                         <div className="mt-4 flex items-center gap-4 text-sm text-muted-foreground">
-                            <span>{post.authorName}</span>
+                            <span>{getAuthorName(post.authorId)}</span>
                             <span>•</span>
                             <time dateTime={post.created_at.toISOString()}>{format(new Date(post.created_at), 'MMMM d, yyyy')}</time>
                         </div>

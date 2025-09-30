@@ -22,6 +22,7 @@ import {
 import { Input } from "@/components/ui/input";
 // Import the custom hook for showing toast notifications.
 import { useToast } from "@/hooks/use-toast";
+import { addNewsletterSubscriber } from "@/lib/firestore";
 
 // Define the validation schema for the form. It ensures the 'email' field is a valid email address.
 const formSchema = z.object({
@@ -42,19 +43,23 @@ export function NewsletterSignup() {
   });
 
   // This function is called when the form is submitted and passes validation.
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // In a real application, you would send the `values.email` to your backend or a third-party service.
-    // For this mock-up, we just log it to the console.
-    console.log("Newsletter signup:", values);
-
-    // Show a success message to the user.
-    toast({
-      title: "Subscribed! 🎉",
-      description: "Thanks for joining our newsletter. Look out for amazing travel stories in your inbox!",
-    });
-
-    // Reset the form fields to their default values.
-    form.reset();
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+        await addNewsletterSubscriber({ ...values, created_at: new Date() });
+        // Show a success message to the user.
+        toast({
+          title: "Subscribed! 🎉",
+          description: "Thanks for joining our newsletter. Look out for amazing travel stories in your inbox!",
+        });
+        // Reset the form fields to their default values.
+        form.reset();
+    } catch (error) {
+        toast({
+            title: "Error",
+            description: "Something went wrong. Please try again.",
+            variant: "destructive"
+        })
+    }
   }
 
   // The JSX for the form.

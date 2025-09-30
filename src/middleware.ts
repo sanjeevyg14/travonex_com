@@ -1,44 +1,38 @@
-// This file implements Next.js Middleware.
-// Middleware allows you to run code on the server before a request is completed.
-// It's useful for things like authentication, A/B testing, redirects, and more.
+// This file configures the middleware for the Next.js application.
+// Middleware allows you to run code before a request is completed. 
+// Based on the incoming request, you can modify the response by rewriting, redirecting, 
+// modifying headers, or streaming.
 
-import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
+// Import the necessary types from Next.js.
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
-// This is the main middleware function.
-// It receives the incoming request as an argument.
+// The main middleware function.
 export function middleware(request: NextRequest) {
-  // In its current state, this middleware does nothing but pass the request along.
-  // It's a placeholder for future logic.
+  // This is a placeholder for actual middleware logic.
+  // For example, you could check for an authentication token in the cookies
+  // and redirect unauthenticated users from protected routes.
+
+  // Example: Protecting a route
+  // const authToken = request.cookies.get('auth-token');
+  // const { pathname } = request.nextUrl;
   
-  // A real-world authentication check might look something like this:
-  //
-  // 1. Get the session token from the request cookies.
-  // const sessionCookie = request.cookies.get('session');
-  //
-  // 2. If the cookie doesn't exist, redirect to the login page.
-  // if (!sessionCookie) {
-  //   const loginUrl = new URL('/login', request.url);
-  //   return NextResponse.redirect(loginUrl);
-  // }
-  //
-  // 3. Verify the token with a backend service (e.g., Firebase Auth).
-  // const isValid = await verifyToken(sessionCookie.value);
-  //
-  // 4. If the token is invalid, redirect to login.
-  // if (!isValid) {
-  //   ...
+  // if (pathname.startsWith('/dashboard') && !authToken) {
+  //   const url = request.nextUrl.clone();
+  //   url.pathname = '/login';
+  //   return NextResponse.redirect(url);
   // }
   
-  // `NextResponse.next()` continues the request lifecycle.
-  return NextResponse.next()
+  // If no redirection or modification is needed, just pass the request through.
+  return NextResponse.next();
 }
 
-// The `config` object specifies which routes this middleware should run on.
-// This is more efficient than running it on every single request.
+// The `config` object specifies which paths the middleware should run on.
+// Using a `matcher` is more efficient than running the middleware on every single request.
 export const config = {
-  // The `matcher` property takes an array of path patterns.
-  // Here, it's configured to run for any path inside `/blog/admin` and `/dashboard`.
-  // The `:path*` part is a wildcard that matches all sub-paths.
-  matcher: ['/blog/admin/:path*', '/dashboard/:path*'],
-}
+  // This matcher applies the middleware to all routes except for those that are
+  // typically static files or internal Next.js assets.
+  matcher: [
+    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+  ],
+};

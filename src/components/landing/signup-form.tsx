@@ -23,6 +23,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 // Import the custom hook for showing toast notifications.
 import { useToast } from "@/hooks/use-toast"
+import { addEarlyAccessUser } from "@/lib/firestore"
 
 // Define the validation schema for the form using Zod.
 // This ensures all fields are filled correctly before submission.
@@ -57,23 +58,29 @@ export function SignupForm() {
   })
 
   // This function handles the form submission.
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // In a real application, you would send these `values` to a backend server or mailing list service.
-    console.log(values)
-    
-    // Show a success toast to the user.
-    toast({
-      title: "Welcome to the tribe! 🎉",
-      description: "Redirecting you to our WhatsApp community...",
-    })
-    
-    // This is a placeholder link. It should be replaced with the actual WhatsApp community invite link.
-    const whatsappCommunityLink = "https://chat.whatsapp.com/your-community-link";
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+        await addEarlyAccessUser({ ...values, created_at: new Date() });
+        // Show a success toast to the user.
+        toast({
+          title: "Welcome to the tribe! 🎉",
+          description: "Redirecting you to our WhatsApp community...",
+        })
+        
+        // This is a placeholder link. It should be replaced with the actual WhatsApp community invite link.
+        const whatsappCommunityLink = "https://chat.whatsapp.com/your-community-link";
 
-    // Redirect the user to the WhatsApp link after a short delay so they can read the toast message.
-    setTimeout(() => {
-      window.location.href = whatsappCommunityLink;
-    }, 2000);
+        // Redirect the user to the WhatsApp link after a short delay so they can read the toast message.
+        setTimeout(() => {
+          window.location.href = whatsappCommunityLink;
+        }, 2000);
+    } catch (error) {
+        toast({
+            title: "Error",
+            description: "Something went wrong. Please try again.",
+            variant: "destructive"
+        })
+    }
   }
 
   // The JSX for the form layout.

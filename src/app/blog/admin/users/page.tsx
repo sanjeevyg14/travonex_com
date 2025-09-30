@@ -5,6 +5,8 @@
 // which could theoretically be updated by other admin actions.
 'use client';
 
+// Import React hooks.
+import { useState, useEffect } from 'react';
 // Import UI components.
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
@@ -13,13 +15,24 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuIte
 import { Badge } from "@/components/ui/badge";
 // Import icons.
 import { PlusCircle, MoreHorizontal } from "lucide-react";
-// Import mock data.
-import { mockUsers } from '@/lib/mock-data';
+// Import Firestore functions.
+import { getUsers } from '@/lib/firestore';
+import { User } from '@/lib/types';
 // Import date formatting utility.
 import { format } from "date-fns";
 
 // The main component for the Admin Users page.
 export default function AdminUsersPage() {
+    const [users, setUsers] = useState<User[]>([]);
+
+    useEffect(() => {
+        async function fetchUsers() {
+            const users = await getUsers();
+            setUsers(users);
+        }
+        fetchUsers();
+    }, []);
+
   // The functionality for adding/editing/deleting users is not implemented in this mock version,
   // but the UI structure is here to demonstrate what it would look like.
 
@@ -49,7 +62,7 @@ export default function AdminUsersPage() {
           </TableHeader>
           <TableBody>
             {/* Map over the mockUsers array to render a row for each user. */}
-            {mockUsers.map(user => (
+            {users.map(user => (
               <TableRow key={user.id}>
                 <TableCell className="font-medium">{user.name}</TableCell>
                 <TableCell>{user.email}</TableCell>
