@@ -5,7 +5,7 @@
 'use client';
 
 // Import React hooks.
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 // Import Next.js components and hooks.
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -87,10 +87,11 @@ export default function SignupPage() {
   };
 
   // If a user is already logged in, they should be redirected.
-  if (user) {
-    router.push('/dashboard');
-    return null; // Render nothing while redirecting.
-  }
+  useEffect(() => {
+    if (user) {
+      router.push('/dashboard');
+    }
+  }, [user, router]);
 
   // The JSX for the signup page layout.
   return (

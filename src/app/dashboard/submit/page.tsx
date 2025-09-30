@@ -73,29 +73,35 @@ export default function SubmitStoryPage() {
                 imageUrl = await uploadImage(file, path);
             }
 
-            await addPost({
-                ...values,
+            // Construct the post object without the 'image' field from the form values.
+            const postData = {
+                title: values.title,
+                excerpt: values.excerpt,
+                content: values.content,
                 authorId: user.uid,
-                status: 'pending',
+                status: 'pending' as const,
                 slug: values.title.toLowerCase().replace(/\s+/g, '-'),
-                featured_img: imageUrl,
+                featuredImgUrl: imageUrl,
                 imageHint: '',
                 category: '',
                 tags: [],
                 created_at: new Date(),
                 updated_at: new Date(),
-            });
+            };
+
+            await addPost(postData);
 
             toast({
                 title: "Success",
                 description: "Your story has been submitted for review.",
             });
 
-            router.push('/dashboard');
+            router.push('/');
         } catch (error) {
+            console.error("Error submitting story: ", error);
             toast({
                 title: "Error",
-                description: "Something went wrong. Please try again.",
+                description: "Something went wrong. Please check the console for details.",
                 variant: "destructive",
             });
         }

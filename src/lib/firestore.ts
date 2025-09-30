@@ -22,8 +22,8 @@ const postConverter = {
     return {
       id: snapshot.id,
       ...data,
-      created_at: data.created_at?.toDate() || new Date(),
-      updated_at: data.updated_at?.toDate() || new Date(),
+      created_at: data.created_at instanceof Timestamp ? data.created_at.toDate() : new Date(),
+      updated_at: data.updated_at instanceof Timestamp ? data.updated_at.toDate() : new Date(),
     } as Post;
   }
 };
@@ -121,6 +121,26 @@ export async function getPosts(): Promise<Post[]> {
   const postSnapshot = await getDocs(postsCol);
   const postList = postSnapshot.docs.map(doc => doc.data() as Post);
   return postList;
+}
+
+// Fetches all published posts from Firestore.
+export async function getPublishedPosts(): Promise<Post[]> {
+    const postsCol = collection(db, 'posts').withConverter(postConverter);
+    const q = query(postsCol, where('status', '==', 'published'));
+    const postSnapshot = await getDocs(q);
+    const postList = postSnapshot.docs.map(doc => doc.data() as Post);
+    return postList;
+}
+
+// Fetches a single post by its slug.
+export async function getPostsBySlug(slug: string): Promise<Post | null> {
+    const postsCol = collection(db, 'posts').withConverter(postConverter);
+    const q = query(postsCol, where('slug', '==', slug), where('status', '==', 'published'));
+    const postSnapshot = await getDocs(q);
+    if (postSnapshot.empty) {
+        return null;
+    }
+    return postSnapshot.docs[0].data() as Post;
 }
 
 // Fetches a single post by its ID.
@@ -229,7 +249,7 @@ export async function getUsers(): Promise<User[]> {
 }
 
 // Fetches a single user by their ID.
-export async function getUser(id: string): Promise<User | null> {
+export async function getUserById(id: string): Promise<User | null> {
     const userDocRef = doc(db, 'users', id).withConverter(userConverter);
     const userSnap = await getDoc(userDocRef);
     if (userSnap.exists()) {

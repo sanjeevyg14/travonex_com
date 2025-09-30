@@ -32,7 +32,7 @@ export function Footer() {
           {/* Column 1: Logo and tagline. */}
           <div className="space-y-4 flex flex-col items-center md:items-start">
             <Link href="/">
-              <Image src="/travonex-logo-footer.png" alt="Travonex" width={150} height={40} />
+              <Image src="/travonex-logo-footer.png" alt="Travonex" width={150} height={40} style={{ height: 'auto' }} />
             </Link>
             <p className="text-background/70">Plan Less. Travel More.</p>
           </div>

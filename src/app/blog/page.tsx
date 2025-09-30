@@ -158,7 +158,7 @@ export default function BlogIndexPage() {
                                 <Link href="/blog/admin">
                                     <LayoutDashboard className="mr-2 h-4 w-4" />
                                     <span>Admin Dashboard</span>
-                                </Link>
+                                 </Link>
                             </DropdownMenuItem>
                         ) : (
                              // Regular users see a link to their personal dashboard.
@@ -225,10 +225,10 @@ export default function BlogIndexPage() {
                     <Link href={`/blog/${post.slug}`} key={post.slug}>
                     <Card className="overflow-hidden h-full group cursor-pointer shadow-lg hover:shadow-2xl transition-shadow duration-300 rounded-2xl border-none">
                         <CardHeader className="p-0">
-                         {post.featured_img && (
+                         {post.featuredImgUrl && (
                             <div className="aspect-video overflow-hidden">
                                 <Image
-                                src={post.featured_img}
+                                src={post.featuredImgUrl}
                                 alt={post.title}
                                 width={600}
                                 height={400}

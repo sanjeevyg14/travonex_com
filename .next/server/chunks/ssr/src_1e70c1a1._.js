@@ -707,7 +707,10 @@ function Header() {
                         src: "/travonex-logo.png",
                         alt: "Travonex",
                         width: 150,
-                        height: 40
+                        height: 40,
+                        style: {
+                            height: 'auto'
+                        }
                     }, void 0, false, {
                         fileName: "[project]/src/components/landing/header.tsx",
                         lineNumber: 49,
@@ -1019,7 +1022,10 @@ function Header() {
                                                                 src: "/travonex-logo.png",
                                                                 alt: "Travonex",
                                                                 width: 150,
-                                                                height: 40
+                                                                height: 40,
+                                                                style: {
+                                                                    height: 'auto'
+                                                                }
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/landing/header.tsx",
                                                                 lineNumber: 137,
@@ -1240,7 +1246,10 @@ function Footer() {
                                         src: "/travonex-logo-footer.png",
                                         alt: "Travonex",
                                         width: 150,
-                                        height: 40
+                                        height: 40,
+                                        style: {
+                                            height: 'auto'
+                                        }
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/landing/footer.tsx",
                                         lineNumber: 35,
@@ -1563,8 +1572,10 @@ __turbopack_context__.s({
     "getComments": (()=>getComments),
     "getPost": (()=>getPost),
     "getPosts": (()=>getPosts),
+    "getPostsBySlug": (()=>getPostsBySlug),
+    "getPublishedPosts": (()=>getPublishedPosts),
     "getStories": (()=>getStories),
-    "getUser": (()=>getUser),
+    "getUserById": (()=>getUserById),
     "getUsers": (()=>getUsers),
     "updateComment": (()=>updateComment),
     "updatePost": (()=>updatePost),
@@ -1591,8 +1602,8 @@ const postConverter = {
         return {
             id: snapshot.id,
             ...data,
-            created_at: data.created_at?.toDate() || new Date(),
-            updated_at: data.updated_at?.toDate() || new Date()
+            created_at: data.created_at instanceof __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$node$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Timestamp"] ? data.created_at.toDate() : new Date(),
+            updated_at: data.updated_at instanceof __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$node$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Timestamp"] ? data.updated_at.toDate() : new Date()
         };
     }
 };
@@ -1682,6 +1693,22 @@ async function getPosts() {
     const postList = postSnapshot.docs.map((doc)=>doc.data());
     return postList;
 }
+async function getPublishedPosts() {
+    const postsCol = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$node$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["collection"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$firebase$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["db"], 'posts').withConverter(postConverter);
+    const q = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$node$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["query"])(postsCol, (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$node$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["where"])('status', '==', 'published'));
+    const postSnapshot = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$node$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["getDocs"])(q);
+    const postList = postSnapshot.docs.map((doc)=>doc.data());
+    return postList;
+}
+async function getPostsBySlug(slug) {
+    const postsCol = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$node$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["collection"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$firebase$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["db"], 'posts').withConverter(postConverter);
+    const q = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$node$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["query"])(postsCol, (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$node$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["where"])('slug', '==', slug), (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$node$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["where"])('status', '==', 'published'));
+    const postSnapshot = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$node$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["getDocs"])(q);
+    if (postSnapshot.empty) {
+        return null;
+    }
+    return postSnapshot.docs[0].data();
+}
 async function getPost(id) {
     const postDocRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$node$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["doc"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$firebase$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["db"], 'posts', id).withConverter(postConverter);
     const postSnap = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$node$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["getDoc"])(postDocRef);
@@ -1753,7 +1780,7 @@ async function getUsers() {
     const userList = userSnapshot.docs.map((doc)=>doc.data());
     return userList;
 }
-async function getUser(id) {
+async function getUserById(id) {
     const userDocRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$node$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["doc"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$firebase$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["db"], 'users', id).withConverter(userConverter);
     const userSnap = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$node$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["getDoc"])(userDocRef);
     if (userSnap.exists()) {
@@ -1901,27 +1928,32 @@ function SubmitStoryPage() {
                 const path = `posts/${user.uid}/${file.name}`;
                 imageUrl = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$storage$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["uploadImage"])(file, path);
             }
-            await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$firestore$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["addPost"])({
-                ...values,
+            // Construct the post object without the 'image' field from the form values.
+            const postData = {
+                title: values.title,
+                excerpt: values.excerpt,
+                content: values.content,
                 authorId: user.uid,
                 status: 'pending',
                 slug: values.title.toLowerCase().replace(/\s+/g, '-'),
-                featured_img: imageUrl,
+                featuredImgUrl: imageUrl,
                 imageHint: '',
                 category: '',
                 tags: [],
                 created_at: new Date(),
                 updated_at: new Date()
-            });
+            };
+            await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$firestore$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["addPost"])(postData);
             toast({
                 title: "Success",
                 description: "Your story has been submitted for review."
             });
             router.push('/dashboard');
         } catch (error) {
+            console.error("Error submitting story: ", error);
             toast({
                 title: "Error",
-                description: "Something went wrong. Please try again.",
+                description: "Something went wrong. Please check the console for details.",
                 variant: "destructive"
             });
         }
@@ -1931,7 +1963,7 @@ function SubmitStoryPage() {
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$landing$2f$header$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Header"], {}, void 0, false, {
                 fileName: "[project]/src/app/dashboard/submit/page.tsx",
-                lineNumber: 106,
+                lineNumber: 112,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("main", {
@@ -1946,20 +1978,20 @@ function SubmitStoryPage() {
                                         children: "Submit Your Travel Story"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/dashboard/submit/page.tsx",
-                                        lineNumber: 111,
+                                        lineNumber: 117,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardDescription"], {
                                         children: "Share your adventures with the Travonex community."
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/dashboard/submit/page.tsx",
-                                        lineNumber: 112,
+                                        lineNumber: 118,
                                         columnNumber: 17
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/dashboard/submit/page.tsx",
-                                lineNumber: 110,
+                                lineNumber: 116,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -1978,7 +2010,7 @@ function SubmitStoryPage() {
                                                                 children: "Title"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/dashboard/submit/page.tsx",
-                                                                lineNumber: 122,
+                                                                lineNumber: 128,
                                                                 columnNumber: 37
                                                             }, void 0),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$form$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["FormControl"], {
@@ -1987,28 +2019,28 @@ function SubmitStoryPage() {
                                                                     ...field
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/dashboard/submit/page.tsx",
-                                                                    lineNumber: 124,
+                                                                    lineNumber: 130,
                                                                     columnNumber: 41
                                                                 }, void 0)
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/dashboard/submit/page.tsx",
-                                                                lineNumber: 123,
+                                                                lineNumber: 129,
                                                                 columnNumber: 37
                                                             }, void 0),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$form$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["FormMessage"], {}, void 0, false, {
                                                                 fileName: "[project]/src/app/dashboard/submit/page.tsx",
-                                                                lineNumber: 126,
+                                                                lineNumber: 132,
                                                                 columnNumber: 37
                                                             }, void 0)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/dashboard/submit/page.tsx",
-                                                        lineNumber: 121,
+                                                        lineNumber: 127,
                                                         columnNumber: 33
                                                     }, void 0)
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/dashboard/submit/page.tsx",
-                                                lineNumber: 117,
+                                                lineNumber: 123,
                                                 columnNumber: 25
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$form$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["FormField"], {
@@ -2020,7 +2052,7 @@ function SubmitStoryPage() {
                                                                 children: "Excerpt"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/dashboard/submit/page.tsx",
-                                                                lineNumber: 135,
+                                                                lineNumber: 141,
                                                                 columnNumber: 37
                                                             }, void 0),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$form$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["FormControl"], {
@@ -2029,28 +2061,28 @@ function SubmitStoryPage() {
                                                                     ...field
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/dashboard/submit/page.tsx",
-                                                                    lineNumber: 137,
+                                                                    lineNumber: 143,
                                                                     columnNumber: 41
                                                                 }, void 0)
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/dashboard/submit/page.tsx",
-                                                                lineNumber: 136,
+                                                                lineNumber: 142,
                                                                 columnNumber: 37
                                                             }, void 0),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$form$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["FormMessage"], {}, void 0, false, {
                                                                 fileName: "[project]/src/app/dashboard/submit/page.tsx",
-                                                                lineNumber: 139,
+                                                                lineNumber: 145,
                                                                 columnNumber: 37
                                                             }, void 0)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/dashboard/submit/page.tsx",
-                                                        lineNumber: 134,
+                                                        lineNumber: 140,
                                                         columnNumber: 33
                                                     }, void 0)
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/dashboard/submit/page.tsx",
-                                                lineNumber: 130,
+                                                lineNumber: 136,
                                                 columnNumber: 25
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$form$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["FormField"], {
@@ -2062,7 +2094,7 @@ function SubmitStoryPage() {
                                                                 children: "Your Story"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/dashboard/submit/page.tsx",
-                                                                lineNumber: 148,
+                                                                lineNumber: 154,
                                                                 columnNumber: 37
                                                             }, void 0),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$form$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["FormControl"], {
@@ -2072,28 +2104,28 @@ function SubmitStoryPage() {
                                                                     ...field
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/dashboard/submit/page.tsx",
-                                                                    lineNumber: 150,
+                                                                    lineNumber: 156,
                                                                     columnNumber: 41
                                                                 }, void 0)
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/dashboard/submit/page.tsx",
-                                                                lineNumber: 149,
+                                                                lineNumber: 155,
                                                                 columnNumber: 37
                                                             }, void 0),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$form$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["FormMessage"], {}, void 0, false, {
                                                                 fileName: "[project]/src/app/dashboard/submit/page.tsx",
-                                                                lineNumber: 152,
+                                                                lineNumber: 158,
                                                                 columnNumber: 37
                                                             }, void 0)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/dashboard/submit/page.tsx",
-                                                        lineNumber: 147,
+                                                        lineNumber: 153,
                                                         columnNumber: 33
                                                     }, void 0)
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/dashboard/submit/page.tsx",
-                                                lineNumber: 143,
+                                                lineNumber: 149,
                                                 columnNumber: 25
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$form$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["FormField"], {
@@ -2105,7 +2137,7 @@ function SubmitStoryPage() {
                                                                 children: "Featured Image"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/dashboard/submit/page.tsx",
-                                                                lineNumber: 161,
+                                                                lineNumber: 167,
                                                                 columnNumber: 37
                                                             }, void 0),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$form$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["FormControl"], {
@@ -2120,28 +2152,28 @@ function SubmitStoryPage() {
                                                                     }
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/dashboard/submit/page.tsx",
-                                                                    lineNumber: 163,
+                                                                    lineNumber: 169,
                                                                     columnNumber: 41
                                                                 }, void 0)
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/dashboard/submit/page.tsx",
-                                                                lineNumber: 162,
+                                                                lineNumber: 168,
                                                                 columnNumber: 37
                                                             }, void 0),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$form$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["FormMessage"], {}, void 0, false, {
                                                                 fileName: "[project]/src/app/dashboard/submit/page.tsx",
-                                                                lineNumber: 174,
+                                                                lineNumber: 180,
                                                                 columnNumber: 37
                                                             }, void 0)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/dashboard/submit/page.tsx",
-                                                        lineNumber: 160,
+                                                        lineNumber: 166,
                                                         columnNumber: 33
                                                     }, void 0)
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/dashboard/submit/page.tsx",
-                                                lineNumber: 156,
+                                                lineNumber: 162,
                                                 columnNumber: 25
                                             }, this),
                                             imagePreview && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -2151,7 +2183,7 @@ function SubmitStoryPage() {
                                                 height: 200
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/dashboard/submit/page.tsx",
-                                                lineNumber: 179,
+                                                lineNumber: 185,
                                                 columnNumber: 29
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2161,55 +2193,55 @@ function SubmitStoryPage() {
                                                     children: "Submit for Review"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/dashboard/submit/page.tsx",
-                                                    lineNumber: 182,
+                                                    lineNumber: 188,
                                                     columnNumber: 29
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/dashboard/submit/page.tsx",
-                                                lineNumber: 181,
+                                                lineNumber: 187,
                                                 columnNumber: 25
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/dashboard/submit/page.tsx",
-                                        lineNumber: 116,
+                                        lineNumber: 122,
                                         columnNumber: 21
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/dashboard/submit/page.tsx",
-                                    lineNumber: 115,
+                                    lineNumber: 121,
                                     columnNumber: 17
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/app/dashboard/submit/page.tsx",
-                                lineNumber: 114,
+                                lineNumber: 120,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/dashboard/submit/page.tsx",
-                        lineNumber: 109,
+                        lineNumber: 115,
                         columnNumber: 12
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/src/app/dashboard/submit/page.tsx",
-                    lineNumber: 108,
+                    lineNumber: 114,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/app/dashboard/submit/page.tsx",
-                lineNumber: 107,
+                lineNumber: 113,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$landing$2f$footer$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Footer"], {}, void 0, false, {
                 fileName: "[project]/src/app/dashboard/submit/page.tsx",
-                lineNumber: 190,
+                lineNumber: 196,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/app/dashboard/submit/page.tsx",
-        lineNumber: 105,
+        lineNumber: 111,
         columnNumber: 6
     }, this);
 }

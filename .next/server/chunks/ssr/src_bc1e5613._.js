@@ -537,7 +537,10 @@ function Header() {
                         src: "/travonex-logo.png",
                         alt: "Travonex",
                         width: 150,
-                        height: 40
+                        height: 40,
+                        style: {
+                            height: 'auto'
+                        }
                     }, void 0, false, {
                         fileName: "[project]/src/components/landing/header.tsx",
                         lineNumber: 49,
@@ -849,7 +852,10 @@ function Header() {
                                                                 src: "/travonex-logo.png",
                                                                 alt: "Travonex",
                                                                 width: 150,
-                                                                height: 40
+                                                                height: 40,
+                                                                style: {
+                                                                    height: 'auto'
+                                                                }
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/landing/header.tsx",
                                                                 lineNumber: 137,
@@ -1357,8 +1363,10 @@ __turbopack_context__.s({
     "getComments": (()=>getComments),
     "getPost": (()=>getPost),
     "getPosts": (()=>getPosts),
+    "getPostsBySlug": (()=>getPostsBySlug),
+    "getPublishedPosts": (()=>getPublishedPosts),
     "getStories": (()=>getStories),
-    "getUser": (()=>getUser),
+    "getUserById": (()=>getUserById),
     "getUsers": (()=>getUsers),
     "updateComment": (()=>updateComment),
     "updatePost": (()=>updatePost),
@@ -1385,8 +1393,8 @@ const postConverter = {
         return {
             id: snapshot.id,
             ...data,
-            created_at: data.created_at?.toDate() || new Date(),
-            updated_at: data.updated_at?.toDate() || new Date()
+            created_at: data.created_at instanceof __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$node$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Timestamp"] ? data.created_at.toDate() : new Date(),
+            updated_at: data.updated_at instanceof __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$node$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Timestamp"] ? data.updated_at.toDate() : new Date()
         };
     }
 };
@@ -1476,6 +1484,22 @@ async function getPosts() {
     const postList = postSnapshot.docs.map((doc)=>doc.data());
     return postList;
 }
+async function getPublishedPosts() {
+    const postsCol = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$node$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["collection"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$firebase$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["db"], 'posts').withConverter(postConverter);
+    const q = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$node$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["query"])(postsCol, (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$node$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["where"])('status', '==', 'published'));
+    const postSnapshot = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$node$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["getDocs"])(q);
+    const postList = postSnapshot.docs.map((doc)=>doc.data());
+    return postList;
+}
+async function getPostsBySlug(slug) {
+    const postsCol = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$node$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["collection"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$firebase$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["db"], 'posts').withConverter(postConverter);
+    const q = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$node$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["query"])(postsCol, (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$node$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["where"])('slug', '==', slug), (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$node$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["where"])('status', '==', 'published'));
+    const postSnapshot = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$node$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["getDocs"])(q);
+    if (postSnapshot.empty) {
+        return null;
+    }
+    return postSnapshot.docs[0].data();
+}
 async function getPost(id) {
     const postDocRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$node$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["doc"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$firebase$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["db"], 'posts', id).withConverter(postConverter);
     const postSnap = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$node$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["getDoc"])(postDocRef);
@@ -1547,7 +1571,7 @@ async function getUsers() {
     const userList = userSnapshot.docs.map((doc)=>doc.data());
     return userList;
 }
-async function getUser(id) {
+async function getUserById(id) {
     const userDocRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$node$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["doc"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$firebase$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["db"], 'users', id).withConverter(userConverter);
     const userSnap = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$node$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["getDoc"])(userDocRef);
     if (userSnap.exists()) {
@@ -1648,7 +1672,7 @@ function SignupForm() {
                 description: "Redirecting you to our WhatsApp community..."
             });
             // This is a placeholder link. It should be replaced with the actual WhatsApp community invite link.
-            const whatsappCommunityLink = "https://chat.whatsapp.com/your-community-link";
+            const whatsappCommunityLink = "https://chat.whatsapp.com/IGMcYhUUjJBF2MYOGLvrOp";
             // Redirect the user to the WhatsApp link after a short delay so they can read the toast message.
             setTimeout(()=>{
                 window.location.href = whatsappCommunityLink;

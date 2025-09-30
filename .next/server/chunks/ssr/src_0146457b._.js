@@ -537,7 +537,10 @@ function Header() {
                         src: "/travonex-logo.png",
                         alt: "Travonex",
                         width: 150,
-                        height: 40
+                        height: 40,
+                        style: {
+                            height: 'auto'
+                        }
                     }, void 0, false, {
                         fileName: "[project]/src/components/landing/header.tsx",
                         lineNumber: 49,
@@ -849,7 +852,10 @@ function Header() {
                                                                 src: "/travonex-logo.png",
                                                                 alt: "Travonex",
                                                                 width: 150,
-                                                                height: 40
+                                                                height: 40,
+                                                                style: {
+                                                                    height: 'auto'
+                                                                }
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/landing/header.tsx",
                                                                 lineNumber: 137,
@@ -1070,7 +1076,10 @@ function Footer() {
                                         src: "/travonex-logo-footer.png",
                                         alt: "Travonex",
                                         width: 150,
-                                        height: 40
+                                        height: 40,
+                                        style: {
+                                            height: 'auto'
+                                        }
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/landing/footer.tsx",
                                         lineNumber: 35,
@@ -1577,8 +1586,10 @@ __turbopack_context__.s({
     "getComments": (()=>getComments),
     "getPost": (()=>getPost),
     "getPosts": (()=>getPosts),
+    "getPostsBySlug": (()=>getPostsBySlug),
+    "getPublishedPosts": (()=>getPublishedPosts),
     "getStories": (()=>getStories),
-    "getUser": (()=>getUser),
+    "getUserById": (()=>getUserById),
     "getUsers": (()=>getUsers),
     "updateComment": (()=>updateComment),
     "updatePost": (()=>updatePost),
@@ -1605,8 +1616,8 @@ const postConverter = {
         return {
             id: snapshot.id,
             ...data,
-            created_at: data.created_at.toDate(),
-            updated_at: data.updated_at.toDate()
+            created_at: data.created_at instanceof __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$node$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Timestamp"] ? data.created_at.toDate() : new Date(),
+            updated_at: data.updated_at instanceof __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$node$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Timestamp"] ? data.updated_at.toDate() : new Date()
         };
     }
 };
@@ -1622,7 +1633,7 @@ const commentConverter = {
         return {
             id: snapshot.id,
             ...data,
-            created_at: data.created_at.toDate()
+            created_at: data.created_at?.toDate() || new Date()
         };
     }
 };
@@ -1638,7 +1649,7 @@ const storyConverter = {
         return {
             id: snapshot.id,
             ...data,
-            created_at: data.created_at.toDate()
+            created_at: data.created_at?.toDate() || new Date()
         };
     }
 };
@@ -1654,7 +1665,7 @@ const userConverter = {
         return {
             id: snapshot.id,
             ...data,
-            created_at: data.created_at.toDate()
+            created_at: data.created_at?.toDate() || new Date()
         };
     }
 };
@@ -1670,7 +1681,7 @@ const earlyAccessUserConverter = {
         return {
             id: snapshot.id,
             ...data,
-            created_at: data.created_at.toDate()
+            created_at: data.created_at?.toDate() || new Date()
         };
     }
 };
@@ -1686,7 +1697,7 @@ const newsletterSubscriberConverter = {
         return {
             id: snapshot.id,
             ...data,
-            created_at: data.created_at.toDate()
+            created_at: data.created_at?.toDate() || new Date()
         };
     }
 };
@@ -1695,6 +1706,22 @@ async function getPosts() {
     const postSnapshot = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$node$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["getDocs"])(postsCol);
     const postList = postSnapshot.docs.map((doc)=>doc.data());
     return postList;
+}
+async function getPublishedPosts() {
+    const postsCol = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$node$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["collection"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$firebase$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["db"], 'posts').withConverter(postConverter);
+    const q = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$node$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["query"])(postsCol, (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$node$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["where"])('status', '==', 'published'));
+    const postSnapshot = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$node$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["getDocs"])(q);
+    const postList = postSnapshot.docs.map((doc)=>doc.data());
+    return postList;
+}
+async function getPostsBySlug(slug) {
+    const postsCol = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$node$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["collection"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$firebase$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["db"], 'posts').withConverter(postConverter);
+    const q = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$node$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["query"])(postsCol, (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$node$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["where"])('slug', '==', slug), (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$node$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["where"])('status', '==', 'published'));
+    const postSnapshot = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$node$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["getDocs"])(q);
+    if (postSnapshot.empty) {
+        return null;
+    }
+    return postSnapshot.docs[0].data();
 }
 async function getPost(id) {
     const postDocRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$node$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["doc"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$firebase$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["db"], 'posts', id).withConverter(postConverter);
@@ -1767,7 +1794,7 @@ async function getUsers() {
     const userList = userSnapshot.docs.map((doc)=>doc.data());
     return userList;
 }
-async function getUser(id) {
+async function getUserById(id) {
     const userDocRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$node$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["doc"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$firebase$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["db"], 'users', id).withConverter(userConverter);
     const userSnap = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$node$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["getDoc"])(userDocRef);
     if (userSnap.exists()) {
@@ -2501,10 +2528,10 @@ function BlogIndexPage() {
                                             children: [
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardHeader"], {
                                                     className: "p-0",
-                                                    children: post.featured_img && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                    children: post.featuredImgUrl && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                         className: "aspect-video overflow-hidden",
                                                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
-                                                            src: post.featured_img,
+                                                            src: post.featuredImgUrl,
                                                             alt: post.title,
                                                             width: 600,
                                                             height: 400,

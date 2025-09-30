@@ -38,8 +38,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 // Import utilities and mock data.
 import { format } from 'date-fns';
-import { getComments, getStories, addComment, addStory } from '@/lib/firestore';
+import { getComments, getStories, addComment, addStory, getUsers } from '@/lib/firestore';
 import { Comment, FollowUpStory, User } from '@/lib/types';
+import { uploadImage } from '@/lib/storage';
 
 // The main component for the interactive section.
 export function InteractiveSection({ articleId }: { articleId: string }) {
@@ -55,9 +56,10 @@ export function InteractiveSection({ articleId }: { articleId: string }) {
     // It runs whenever the `articleId` prop changes.
     useEffect(() => {
         async function fetchData() {
-            const [comments, stories] = await Promise.all([getComments(articleId), getStories(articleId)]);
+            const [comments, stories, users] = await Promise.all([getComments(articleId), getStories(articleId), getUsers()]);
             setComments(comments.filter(c => c.status === 'approved'));
             setStories(stories.filter(s => s.status === 'approved'));
+            setUsers(users);
         }
         fetchData();
     }, [articleId]); // Dependency array.
@@ -217,25 +219,43 @@ function SubmissionModal({ type, articleId, onSubmission }: { type: 'comment' | 
             return;
         }
 
+        let imageUrl: string | undefined = undefined;
+
+        if (image) {
+            const path = `comments/${user.uid}/${image.name}`;
+            imageUrl = await uploadImage(image, path);
+        }
+
         // Call the appropriate mock data function based on the type.
         if (isComment) {
-            await addComment({
+
+            const commentData: Omit<Comment, 'id'> = {
                 postId: articleId,
                 userId: user.uid,
                 comment_text: content,
-                image_url: imagePreview || undefined, // Use the preview URL for the mock.
                 status: 'pending',
                 created_at: new Date()
-            });
+            };
+
+            if (imageUrl) {
+                commentData.image_url = imageUrl;
+            }
+
+            await addComment(commentData);
         } else {
-            await addStory({
+            const storyData: Omit<FollowUpStory, 'id'> = {
                 postId: articleId,
                 userId: user.uid,
                 story_text: content,
-                image_url: imagePreview || undefined,
                 status: 'pending',
                 created_at: new Date()
-            });
+            };
+
+            if (imageUrl) {
+                storyData.image_url = imageUrl;
+            }
+
+            await addStory(storyData);
         }
         
         // Provide user feedback and reset the form.

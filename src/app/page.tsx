@@ -32,7 +32,7 @@ export default function Home() {
             {/* Call-to-action buttons. */}
             <div className="mt-10 flex flex-col sm:flex-row justify-center items-center gap-4">
               <Button size="lg" className="rounded-2xl px-8 py-6 font-bold hover:scale-105 transition-transform" asChild>
-                <Link href="#">Join WhatsApp Community</Link>
+                <Link href="https://chat.whatsapp.com/IGMcYhUUjJBF2MYOGLvrOp">Join WhatsApp Community</Link>
               </Button>
               <Button size="lg" variant="outline" className="rounded-2xl px-8 py-6 font-bold hover:scale-105 transition-transform" asChild>
                 <Link href="#signup">Sign up for Early Access</Link>
@@ -112,7 +112,7 @@ export default function Home() {
                 </p>
                 <div className="mt-8">
                   <Button size="lg" variant="outline" className="rounded-2xl px-8 py-6 font-bold bg-white text-primary hover:bg-gray-100 hover:text-primary hover:scale-105 transition-transform" asChild>
-                    <Link href="#">Join WhatsApp Community</Link>
+                    <Link href="https://chat.whatsapp.com/IGMcYhUUjJBF2MYOGLvrOp?mode=ems_copy_c">Join WhatsApp Community</Link>
                   </Button>
                 </div>
               </div>

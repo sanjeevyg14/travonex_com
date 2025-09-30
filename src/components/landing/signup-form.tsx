@@ -68,7 +68,7 @@ export function SignupForm() {
         })
         
         // This is a placeholder link. It should be replaced with the actual WhatsApp community invite link.
-        const whatsappCommunityLink = "https://chat.whatsapp.com/your-community-link";
+        const whatsappCommunityLink = "https://chat.whatsapp.com/IGMcYhUUjJBF2MYOGLvrOp";
 
         // Redirect the user to the WhatsApp link after a short delay so they can read the toast message.
         setTimeout(() => {

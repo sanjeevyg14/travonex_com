@@ -11,6 +11,7 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   updateProfile,
+  UserCredential,
 } from 'firebase/auth';
 import { app, db } from '@/lib/firebase';
 import { useToast } from './use-toast';
@@ -24,10 +25,10 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   userRole: string | null;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<UserCredential>;
   signup: (email: string, password: string, displayName: string) => Promise<void>;
   logout: () => Promise<void>;
-  googleSignIn: () => Promise<void>;
+  googleSignIn: () => Promise<UserCredential>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -71,7 +72,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   }, []);
 
   const login = async (email: string, password: string) => {
-    await signInWithEmailAndPassword(auth, email, password);
+    return await signInWithEmailAndPassword(auth, email, password);
   };
 
   const signup = async (email: string, password: string, displayName: string) => {
@@ -115,6 +116,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     } else {
       setUserRole(userDoc.data().role);
     }
+    return userCredential;
   };
 
   const value = {

@@ -17,21 +17,17 @@ import { Button } from '@/components/ui/button'; // The standard button componen
 import Link from 'next/link'; // The Next.js component for client-side navigation.
 import { Card, CardContent, CardHeader } from '@/components/ui/card'; // UI components for card layouts.
 import { InteractiveSection } from '@/components/blog/interactive-section'; // The component for comments and stories.
-import { getPosts, getUsers } from '@/lib/firestore'; // The Firestore data source for posts and users.
+import { getPostsBySlug, getPublishedPosts, getUserById } from '@/lib/firestore'; // The Firestore data source for posts and users.
 
 // An asynchronous function to retrieve a single blog post from the mock data based on its slug.
 // In a real application, this would fetch data from a database.
 async function getBlogPostBySlug(slug: string) {
-    const posts = await getPosts();
-    // Find the post in the `mockPosts` array where the slug matches the provided slug.
-    const post = posts.find(p => p.slug === slug);
+    const post = await getPostsBySlug(slug);
     // If the post is not found or is not 'published', return null. This prevents drafts from being viewed publicly.
     if (!post || post.status !== 'published') {
         return null;
     }
-    const users = await getUsers();
-    // Find the author of the post in the `mockUsers` array.
-    const author = users.find(u => u.id === post.authorId);
+    const author = await getUserById(post.authorId);
     // Return the post data combined with the author's name and avatar.
     return { ...post, authorName: author?.name || 'Unknown', authorAvatar: author?.avatar };
 }
@@ -39,7 +35,7 @@ async function getBlogPostBySlug(slug: string) {
 // An asynchronous function to get a few related posts.
 // This is based on the category of the current post, excluding the current post itself.
 async function getRelatedPosts(categoryId: string | null, currentPostId: string) {
-    const posts = await getPosts();
+    const posts = await getPublishedPosts();
     // Filter `mockPosts` to find posts that are 'published', in the same category, and are not the current post.
     return posts.filter(p => p.status === 'published' && p.category === categoryId && p.id !== currentPostId).slice(0, 3); // Limit to 3 related posts.
 }
@@ -73,7 +69,7 @@ export async function generateMetadata(
     openGraph: {
       title: post.title,
       description: post.excerpt,
-      images: [post.featured_img], // The main image for the social media preview.
+      images: [post.featuredImgUrl], // The main image for the social media preview.
     },
   }
 }
@@ -118,10 +114,10 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
           </header>
 
           {/* Display the featured image if it exists. */}
-          {post.featured_img && (
+          {post.featuredImgUrl && (
             <div className="aspect-video relative mb-12 rounded-2xl overflow-hidden shadow-2xl">
                 <Image
-                  src={post.featured_img}
+                  src={post.featuredImgUrl}
                   alt={post.title}
                   fill // The `fill` prop makes the image cover its parent container.
                   className="object-cover"
@@ -170,10 +166,10 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
                   <Link href={`/blog/${relatedPost.slug}`} key={relatedPost.slug}>
                     <Card className="overflow-hidden h-full group cursor-pointer shadow-lg hover:shadow-2xl transition-shadow duration-300 rounded-2xl border-none">
                       <CardHeader className="p-0">
-                         {relatedPost.featured_img && (
+                         {relatedPost.featuredImgUrl && (
                             <div className="aspect-video overflow-hidden">
                                 <Image
-                                src={relatedPost.featured_img}
+                                src={relatedPost.featuredImgUrl}
                                 alt={relatedPost.title}
                                 width={600}
                                 height={400}

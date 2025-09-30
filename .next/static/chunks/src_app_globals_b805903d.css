@@ -1400,6 +1400,10 @@ section {
   background-color: #f3f4f666;
 }
 
+.bg-gray-200\/50 {
+  background-color: #e5e7eb80;
+}
+
 .bg-gray-500\/50 {
   background-color: #6b728080;
 }
@@ -1458,10 +1462,6 @@ section {
 .bg-yellow-100 {
   --tw-bg-opacity: 1;
   background-color: rgb(254 249 195 / var(--tw-bg-opacity, 1));
-}
-
-.bg-gray-200\/50 {
-  background-color: #e5e7eb80;
 }
 
 .bg-gradient-to-b {
@@ -3085,10 +3085,6 @@ section {
     padding: 4rem;
   }
 
-  .md\:p-6 {
-    padding: 1.5rem;
-  }
-
   .md\:py-24 {
     padding-top: 6rem;
     padding-bottom: 6rem;
@@ -3197,10 +3193,6 @@ section {
 
   .lg\:grid-cols-\[280px_1fr\] {
     grid-template-columns: 280px 1fr;
-  }
-
-  .lg\:p-8 {
-    padding: 2rem;
   }
 }
 

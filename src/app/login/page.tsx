@@ -6,7 +6,7 @@
 'use client';
 
 // Import React hooks for state management.
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 // Import Next.js components for navigation.
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -20,6 +20,7 @@ import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/hooks/use-auth';
 // Import icons.
 import { Chrome } from 'lucide-react';
+import { getUserById } from '@/lib/firestore';
 
 // The main component for the Login Page.
 export default function LoginPage() {
@@ -44,9 +45,16 @@ export default function LoginPage() {
     
     try {
       // Call the login function from the auth context.
-      await login(email, password);
-      // If login is successful, redirect to the dashboard.
-      router.push('/dashboard');
+      const userCredential = await login(email, password);
+
+      if (userCredential) {
+        const userDoc = await getUserById(userCredential.user.uid);
+        if (userDoc && userDoc.role === 'admin') {
+          router.push('/blog/admin');
+        } else {
+          router.push('/dashboard');
+        }
+      }
     } catch (err: unknown) {
       // If there's an error, display a generic message.
       // In a real application, you might want to parse the error object (err)
@@ -69,9 +77,15 @@ export default function LoginPage() {
     
     try {
       // Call the googleSignIn function from the auth context.
-      await googleSignIn();
-      // On success, redirect to the dashboard.
-      router.push('/dashboard');
+      const userCredential = await googleSignIn();
+      if (userCredential) {
+        const userDoc = await getUserById(userCredential.user.uid);
+        if (userDoc && userDoc.role === 'admin') {
+          router.push('/blog/admin');
+        } else {
+          router.push('/dashboard');
+        }
+      }
     } catch (err: unknown) {
       // Handle potential errors.
       if (err instanceof Error) {
@@ -87,10 +101,12 @@ export default function LoginPage() {
   
   // If the user is already logged in, redirect them to the dashboard.
   // This prevents a logged-in user from seeing the login page again.
-  if (user) {
-    router.push('/dashboard');
-    return null; // Return null to prevent rendering the login form while redirecting.
-  }
+  useEffect(() => {
+    if (user) {
+      router.push('/');
+    }
+  }, [user, router]);
+
 
   // The JSX for the login page layout.
   return (

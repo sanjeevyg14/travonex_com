@@ -23,7 +23,7 @@ export type Post = {
   excerpt: string; // A short summary.
   authorId: string; // The ID of the user who wrote the post.
   status: 'draft' | 'pending' | 'published' | 'rejected'; // The moderation status.
-  featured_img: string; // URL for the main image.
+  featuredImgUrl: string; // URL for the main image.
   imageHint: string; // A hint for AI image tools.
   category: string;
   tags: string[];

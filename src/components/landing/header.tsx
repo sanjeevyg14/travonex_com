@@ -46,7 +46,7 @@ export function Header() {
       <div className="container flex h-20 items-center justify-between">
         {/* The site logo, linking to the homepage. */}
         <Link href="/">
-          <Image src="/travonex-logo.png" alt="Travonex" width={150} height={40} />
+          <Image src="/travonex-logo.png" alt="Travonex" width={150} height={40} style={{ height: 'auto' }} />
         </Link>
         
         {/* The desktop navigation menu. It is hidden on small screens (`hidden md:flex`). */}
@@ -134,7 +134,7 @@ export function Header() {
                 <div className="flex flex-col h-full p-6">
                     <div className="flex items-center justify-between mb-8">
                         <Link href="/" onClick={() => setIsOpen(false)}>
-                          <Image src="/travonex-logo.png" alt="Travonex" width={150} height={40} />
+                          <Image src="/travonex-logo.png" alt="Travonex" width={150} height={40} style={{ height: 'auto' }} />
                         </Link>
                         <SheetClose asChild>
                         <Button variant="ghost" size="icon" aria-label="Close menu">

@@ -313,7 +313,10 @@ function Footer() {
                                         src: "/travonex-logo-footer.png",
                                         alt: "Travonex",
                                         width: 150,
-                                        height: 40
+                                        height: 40,
+                                        style: {
+                                            height: 'auto'
+                                        }
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/landing/footer.tsx",
                                         lineNumber: 35,
@@ -583,7 +586,7 @@ function Home() {
                                                 className: "rounded-2xl px-8 py-6 font-bold hover:scale-105 transition-transform",
                                                 asChild: true,
                                                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["default"], {
-                                                    href: "#",
+                                                    href: "https://chat.whatsapp.com/IGMcYhUUjJBF2MYOGLvrOp",
                                                     children: "Join WhatsApp Community"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/page.tsx",
@@ -859,7 +862,7 @@ function Home() {
                                             className: "rounded-2xl px-8 py-6 font-bold bg-white text-primary hover:bg-gray-100 hover:text-primary hover:scale-105 transition-transform",
                                             asChild: true,
                                             children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["default"], {
-                                                href: "#",
+                                                href: "https://chat.whatsapp.com/IGMcYhUUjJBF2MYOGLvrOp?mode=ems_copy_c",
                                                 children: "Join WhatsApp Community"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/page.tsx",

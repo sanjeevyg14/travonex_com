@@ -808,7 +808,7 @@ const AuthProvider = ({ children })=>{
         return ()=>unsubscribe();
     }, []);
     const login = async (email, password)=>{
-        await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$firebase$2f$node_modules$2f40$firebase$2f$auth$2f$dist$2f$node$2d$esm$2f$totp$2d$219bb96f$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__ab__as__signInWithEmailAndPassword$3e$__["signInWithEmailAndPassword"])(auth, email, password);
+        return await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$firebase$2f$node_modules$2f40$firebase$2f$auth$2f$dist$2f$node$2d$esm$2f$totp$2d$219bb96f$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__ab__as__signInWithEmailAndPassword$3e$__["signInWithEmailAndPassword"])(auth, email, password);
     };
     const signup = async (email, password, displayName)=>{
         const userCredential = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$firebase$2f$node_modules$2f40$firebase$2f$auth$2f$dist$2f$node$2d$esm$2f$totp$2d$219bb96f$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__aa__as__createUserWithEmailAndPassword$3e$__["createUserWithEmailAndPassword"])(auth, email, password);
@@ -850,6 +850,7 @@ const AuthProvider = ({ children })=>{
         } else {
             setUserRole(userDoc.data().role);
         }
+        return userCredential;
     };
     const value = {
         user,
@@ -865,7 +866,7 @@ const AuthProvider = ({ children })=>{
         children: !loading && children
     }, void 0, false, {
         fileName: "[project]/src/hooks/use-auth.tsx",
-        lineNumber: 130,
+        lineNumber: 132,
         columnNumber: 10
     }, this);
 };

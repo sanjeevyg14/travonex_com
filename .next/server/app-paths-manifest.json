@@ -1,12 +1,8 @@
 {
-  "/_not-found/page": "app/_not-found/page.js",
-  "/blog/admin/page": "app/blog/admin/page.js",
-  "/blog/admin/posts/page": "app/blog/admin/posts/page.js",
-  "/blog/admin/users/page": "app/blog/admin/users/page.js",
+  "/blog/[slug]/page": "app/blog/[slug]/page.js",
+  "/blog/admin/comments/page": "app/blog/admin/comments/page.js",
+  "/blog/admin/stories/page": "app/blog/admin/stories/page.js",
   "/blog/page": "app/blog/page.js",
-  "/dashboard/page": "app/dashboard/page.js",
-  "/dashboard/submit/page": "app/dashboard/submit/page.js",
   "/favicon.ico/route": "app/favicon.ico/route.js",
-  "/login/page": "app/login/page.js",
   "/page": "app/page.js"
 }
