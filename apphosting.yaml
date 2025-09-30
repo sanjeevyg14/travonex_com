@@ -23,7 +23,7 @@ env:
   - variable: NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
     value: "G-C6KSX10G84"
 
-# Optional build step (for Next.js, React, Vite etc.)
+# Build step for Next.js
 build:
   command: npm run build
   outputDir: .next
