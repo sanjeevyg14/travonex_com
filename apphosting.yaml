@@ -1,7 +1,29 @@
-# Settings to manage and configure a Firebase App Hosting backend.
-# https://firebase.google.com/docs/app-hosting/configure
+# apphosting.yaml
+# Firebase App Hosting configuration for Travonex
 
 runConfig:
-  # Increase this value if you'd like to automatically spin up
-  # more instances in response to increased traffic.
-  maxInstances: 1
+  runtime: nodejs20
+  minInstances: 1
+  maxInstances: 3
+  concurrency: 80
+
+env:
+  - variable: NEXT_PUBLIC_FIREBASE_API_KEY
+    value: "AIzaSyCmjbghfeOi7a3CzctkQku4-OkceajlL1o"
+  - variable: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+    value: "travonex-78b26.firebaseapp.com"
+  - variable: NEXT_PUBLIC_FIREBASE_PROJECT_ID
+    value: "travonex-78b26"
+  - variable: NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+    value: "travonex-78b26.firebasestorage.app"
+  - variable: NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+    value: "344710455474"
+  - variable: NEXT_PUBLIC_FIREBASE_APP_ID
+    value: "1:344710455474:web:2687b18ad1ad05b03ae9ab"
+  - variable: NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
+    value: "G-C6KSX10G84"
+
+# Optional build step (for Next.js, React, Vite etc.)
+build:
+  command: npm run build
+  outputDir: .next
