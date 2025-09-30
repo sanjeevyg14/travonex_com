@@ -1,0 +1,110 @@
+/* 
+  This file is the global stylesheet for the application.
+  It uses Tailwind CSS directives to include base styles, components, and utilities.
+  It also defines the application's color palette and theme using CSS variables,
+  which is a best practice for theming with Tailwind and ShadCN UI.
+*/
+
+/* 
+  @tailwind directives are special Tailwind-specific at-rules that are replaced
+  by Tailwind during the build process.
+*/
+@tailwind base;       /* Injects Tailwind's base styles (like a CSS reset). */
+@tailwind components; /* Injects Tailwind's component classes. */
+@tailwind utilities;  /* Injects Tailwind's utility classes (like `p-4`, `flex`, etc.). */
+
+/* 
+  The `@layer base` directive is used to add your own custom base styles.
+  This is where we define the CSS variables for our color theme.
+  ShadCN UI components are designed to use these variables, allowing for easy theming.
+*/
+@layer base {
+  /* The `:root` selector targets the root element of the document (<html>). */
+  /* This block defines the variables for the light theme (the default theme). */
+  :root {
+    /* Color variables are defined in HSL (Hue, Saturation, Lightness) format. */
+    /* This makes it easy to create variations of colors (e.g., slightly darker or lighter). */
+    
+    /* Background colors */
+    --background: 0 0% 100%; /* White */
+    --foreground: 0 0% 13.3%; /* Charcoal #222222 - Main text color */
+    
+    /* Card component colors */
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 13.3%;
+    
+    /* Popover component colors */
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 13.3%;
+    
+    /* Primary color (brand color) */
+    --primary: 30 100% 60%; /* Vibrant Orange #FF9933 */
+    --primary-foreground: 0 0% 13.3%; /* Text color for on top of the primary color */
+    
+    /* Secondary color (for backgrounds, etc.) */
+    --secondary: 0 0% 96.9%; /* Light Gray #F7F7F7 */
+    --secondary-foreground: 0 0% 13.3%;
+    
+    /* Muted colors (for less important text and elements) */
+    --muted: 0 0% 96.9%;
+    --muted-foreground: 0 0% 45.1%;
+    
+    /* Accent color (for interactive elements) */
+    --accent: 30 100% 60%; /* Orange, same as primary in this theme */
+    --accent-foreground: 0 0% 100%; /* Text on top of accent color */
+    
+    /* Destructive color (for error states, delete buttons) */
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    
+    /* Border and input field colors */
+    --border: 0 0% 91.4%;
+    --input: 0 0% 91.4%;
+    
+    /* Ring color (for focus outlines) */
+    --ring: 30 100% 60%;
+    
+    /* Border radius for components like cards and buttons */
+    --radius: 0.5rem;
+  }
+  
+  /* The `.dark` class selector is used by Tailwind's dark mode strategy. */
+  /* When the <html> element has the class "dark", these variables will override the :root ones. */
+  .dark {
+    --background: 0 0% 13.3%; /* Charcoal for dark bg */
+    --foreground: 0 0% 98%;
+    --card: 0 0% 13.3%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 13.3%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 30 100% 60%;
+    --primary-foreground: 0 0% 13.3%;
+    --secondary: 0 0% 17.5%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 17.5%;
+    --muted-foreground: 0 0% 65.1%;
+    --accent: 30 100% 60%;
+    --accent-foreground: 0 0% 13.3%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 17.5%;
+    --input: 0 0% 17.5%;
+    --ring: 30 100% 60%;
+  }
+}
+
+/* This layer is for applying general styles to base HTML elements. */
+@layer base {
+  /* A utility rule to ensure all elements use the defined border color variable. */
+  * {
+    @apply border-border;
+  }
+  /* Apply the background and foreground colors to the entire page body. */
+  body {
+    @apply bg-background text-foreground;
+  }
+  /* This helps with smooth scrolling to sections when using fragment identifiers (e.g., #about). */
+  section {
+    @apply scroll-mt-20; /* The value should match the height of the sticky header. */
+  }
+}

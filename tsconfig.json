@@ -1,0 +1,47 @@
+// This is the configuration file for the TypeScript compiler (tsc).
+// It tells the compiler how to handle the project's TypeScript files.
+{
+  "compilerOptions": {
+    // `target` specifies the ECMAScript version to compile down to. ES2017 is a modern standard with good browser support.
+    "target": "ES2017",
+    // `lib` specifies a set of built-in API declarations (e.g., for the DOM, or new ES features).
+    "lib": ["dom", "dom.iterable", "esnext"],
+    // `allowJs` allows JavaScript files to be imported into TypeScript files.
+    "allowJs": true,
+    // `skipLibCheck` skips type checking of all declaration files (*.d.ts). This can speed up compilation.
+    "skipLibCheck": true,
+    // `strict` enables all strict type-checking options, which is a best practice for robust code.
+    "strict": true,
+    // `noEmit` tells the compiler not to output any files (like .js files). Next.js handles the transpilation process.
+    "noEmit": true,
+    // `esModuleInterop` enables compatibility with CommonJS modules that use `module.exports`.
+    "esModuleInterop": true,
+    // `module` specifies the module system. 'esnext' is a future-proof choice that lets bundlers like Webpack handle it.
+    "module": "esnext",
+    // `moduleResolution` tells the compiler how to find modules. 'bundler' is the recommended setting for modern apps.
+    "moduleResolution": "bundler",
+    // `resolveJsonModule` allows importing .json files as modules.
+    "resolveJsonModule": true,
+    // `isolatedModules` ensures that each file can be transpiled without relying on other files, which is required by some tools.
+    "isolatedModules": true,
+    // `jsx` configures how JSX is handled. 'preserve' keeps the JSX as-is for another tool (like Next.js) to process.
+    "jsx": "preserve",
+    // `incremental` enables incremental compilation, which can speed up subsequent builds.
+    "incremental": true,
+    // `plugins` allows for custom transformations during compilation. Here, we're using the Next.js plugin.
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    // `paths` sets up path aliases. This allows for cleaner imports, like `@/components/Button`
+    // instead of `../../components/Button`.
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  // `include` is an array of files and directories that the compiler should process.
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  // `exclude` is an array of files and directories to be ignored by the compiler.
+  "exclude": ["node_modules"]
+}
