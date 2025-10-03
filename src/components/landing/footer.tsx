@@ -3,7 +3,7 @@
 
 // Import React and necessary components.
 import React from 'react';
-import { Instagram, Linkedin } from 'lucide-react'; // Icons for social media links.
+import { Instagram, Linkedin, Youtube, Facebook, Twitter } from 'lucide-react'; // Icons for social media links.
 import Link from 'next/link'; // For client-side navigation.
 import Image from 'next/image'; // For displaying images.
 
@@ -11,8 +11,11 @@ import Image from 'next/image'; // For displaying images.
 export function Footer() {
   // Array of social media link objects. This makes it easy to add or remove links.
   const socialLinks = [
-    { icon: <Instagram className="h-6 w-6" />, href: '#', 'aria-label': 'Instagram' },
-    { icon: <Linkedin className="h-6 w-6" />, href: '#', 'aria-label': 'LinkedIn' },
+    { icon: <Youtube className="h-6 w-6" />, href: 'https://www.youtube.com/@Travonex', 'aria-label': 'Youtube' },
+    { icon: <Twitter className="h-6 w-6" />, href: 'https://www.linkedin.com/company/travonex', 'aria-label': 'Twitter' },
+    { icon: <Facebook className="h-6 w-6" />, href: 'https://www.facebook.com/profile.php?id=61581171023347', 'aria-label': 'Facebook' },
+    { icon: <Instagram className="h-6 w-6" />, href: 'https://www.instagram.com/travonex', 'aria-label': 'Instagram' },
+    { icon: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-whatsapp"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52s-.67-.165-.67-.165l-.67-.165s-.273-.099-.273-.099c-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164C3.06 7.843 3 8.36 3 9.382c0 1.02.53 1.903 1.255 2.585.725.682 1.59 1.164 2.39 1.475.798.312 1.48.463 2.058.463.578 0 1.157-.15 1.653-.463.497-.312.94-.788 1.255-1.475.315-.682.465-1.59.465-2.585 0-1.02-.173-1.542-.47-1.84s-.644-.448-.94-.52c-.297-.075-.67-.075-.67-.075z" /></svg>, href: 'https://wa.me/919008114928', 'aria-label': 'Whatsapp' },
   ];
   
   // Array of navigation link objects for the footer.
