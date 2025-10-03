@@ -10,6 +10,8 @@ export type User = {
   id: string; // Unique identifier (would be the UID from Firebase Auth).
   name: string;
   email: string;
+  username?: string;
+  bio?: string;
   role: 'user' | 'editor' | 'admin'; // Role for controlling permissions.
   avatar?: string; // Optional URL for a profile picture.
   created_at: Date;
@@ -21,7 +23,7 @@ export type Post = {
   slug: string; // URL-friendly version of the title.
   content: string; // The full content of the post, can include HTML.
   excerpt: string; // A short summary.
-  authorId: string; // The ID of the user who wrote the post.
+  author_id: string; // The ID of the user who wrote the post.
   status: 'draft' | 'pending' | 'published' | 'rejected'; // The moderation status.
   featuredImgUrl: string; // URL for the main image.
   imageHint: string; // A hint for AI image tools.

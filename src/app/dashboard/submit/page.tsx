@@ -78,7 +78,7 @@ export default function SubmitStoryPage() {
                 title: values.title,
                 excerpt: values.excerpt,
                 content: values.content,
-                authorId: user.uid,
+                author_id: user.uid,
                 status: 'pending' as const,
                 slug: values.title.toLowerCase().replace(/\s+/g, '-'),
                 featuredImgUrl: imageUrl,
@@ -96,7 +96,7 @@ export default function SubmitStoryPage() {
                 description: "Your story has been submitted for review.",
             });
 
-            router.push('/');
+            router.push('/dashboard');
         } catch (error) {
             console.error("Error submitting story: ", error);
             toast({

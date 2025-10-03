@@ -11,7 +11,7 @@ import Link from 'next/link'; // For client-side navigation.
 import Image from 'next/image'; // For displaying images.
 import { Button } from '@/components/ui/button'; // The standard button component.
 import { useState } from 'react'; // React hook for state management.
-import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet'; // Components for the mobile menu drawer.
+import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetTitle } from '@/components/ui/sheet'; // Components for the mobile menu drawer.
 import { useAuth } from '@/hooks/use-auth'; // Custom hook for authentication.
 import {
   DropdownMenu,
@@ -131,6 +131,7 @@ export function Header() {
                 </Button>
                 </SheetTrigger>
                 <SheetContent side="right" className="w-full max-w-xs bg-background">
+                <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
                 <div className="flex flex-col h-full p-6">
                     <div className="flex items-center justify-between mb-8">
                         <Link href="/" onClick={() => setIsOpen(false)}>

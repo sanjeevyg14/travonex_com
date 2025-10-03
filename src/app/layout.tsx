@@ -10,6 +10,7 @@ import { Toaster } from "@/components/ui/toaster";
 // Import the custom AuthProvider. Wrapping the entire app in this provider
 // makes the authentication state available to all components.
 import { AuthProvider } from '@/hooks/use-auth';
+import Script from 'next/script';
 
 // The `metadata` object defines the default SEO metadata for the application.
 // Pages can override these values, but this provides a good starting point.
@@ -82,6 +83,16 @@ export default function RootLayout({
             {/* The Toaster component is placed here to be available on all pages. */}
             <Toaster />
         </AuthProvider>
+        <Script async src="https://www.googletagmanager.com/gtag/js?id=G-C6KSX10G84"></Script>
+        <Script>
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-C6KSX10G84');
+          `}
+        </Script>
       </body>
     </html>
   );

@@ -27,7 +27,10 @@ async function getBlogPostBySlug(slug: string) {
     if (!post || post.status !== 'published') {
         return null;
     }
-    const author = await getUserById(post.authorId);
+
+    // Handle the old 'authorId' and the new 'author_id' for backward compatibility.
+    const authorId = post.author_id || (post as any).authorId;
+    const author = await getUserById(authorId);
     // Return the post data combined with the author's name and avatar.
     return { ...post, authorName: author?.name || 'Unknown', authorAvatar: author?.avatar };
 }
@@ -63,8 +66,11 @@ export async function generateMetadata(
  
   // If the post is found, return detailed metadata for better SEO.
   return {
-    title: `${post.title} – Travonex Insights`,
-    description: `Read ${post.title} on Travonex for expert insights, stories, and community discussions.`,
+    title: `${post.title} | Travonex`,
+    description: `Discover ${post.title} with Travonex – your gateway to curated weekend getaways, treks, road trips, and unique travel experiences across India. Plan smarter, travel better.`,
+    alternates: {
+      canonical: `${process.env.NEXT_PUBLIC_BASE_URL}/blog/${post.slug}`,
+    },
     // Open Graph metadata is used for social media sharing (e.g., Facebook, LinkedIn).
     openGraph: {
       title: post.title,
@@ -180,7 +186,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
                          )}
                       </CardHeader>
                       <CardContent className="p-6">
-                        <h3 className="text-xl font-bold font-headline group-hover:text-primary transition-colors">{relatedPost.title}</h3>
+                        <h3 className="text-xl font-bold font-headline group-hover:text-primary transition-.colors">{relatedPost.title}</h3>
                         <p className="mt-2 text-muted-foreground line-clamp-2">{relatedPost.excerpt}</p>
                       </CardContent>
                     </Card>

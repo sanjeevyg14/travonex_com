@@ -383,6 +383,10 @@ section {
   bottom: -3rem;
 }
 
+.-bottom-2 {
+  bottom: -.5rem;
+}
+
 .-left-12 {
   left: -3rem;
 }
@@ -751,6 +755,10 @@ section {
   height: var(--radix-select-trigger-height);
 }
 
+.h-auto {
+  height: auto;
+}
+
 .h-full {
   height: 100%;
 }
@@ -777,6 +785,10 @@ section {
 
 .min-h-0 {
   min-height: 0;
+}
+
+.min-h-\[100px\] {
+  min-height: 100px;
 }
 
 .min-h-\[120px\] {
@@ -897,6 +909,10 @@ section {
 
 .w-full {
   width: 100%;
+}
+
+.w-32 {
+  width: 8rem;
 }
 
 .min-w-0 {
@@ -1268,6 +1284,10 @@ section {
   border-width: 1.5px;
 }
 
+.border-4 {
+  border-width: 4px;
+}
+
 .border-b {
   border-bottom-width: 1px;
 }
@@ -1337,6 +1357,10 @@ section {
 .border-yellow-200 {
   --tw-border-opacity: 1;
   border-color: rgb(254 240 138 / var(--tw-border-opacity, 1));
+}
+
+.border-background {
+  border-color: hsl(var(--background));
 }
 
 .border-l-transparent {
@@ -1776,6 +1800,10 @@ section {
 
 .uppercase {
   text-transform: uppercase;
+}
+
+.lowercase {
+  text-transform: lowercase;
 }
 
 .italic {
@@ -3083,6 +3111,11 @@ section {
 
   .md\:p-16 {
     padding: 4rem;
+  }
+
+  .md\:py-16 {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
   }
 
   .md\:py-24 {

@@ -244,7 +244,7 @@ export default function BlogIndexPage() {
                         <h2 className="text-xl font-bold font-headline group-hover:text-primary transition-colors">{post.title}</h2>
                         <p className="mt-2 text-muted-foreground line-clamp-3">{post.excerpt}</p>
                         <div className="mt-4 flex items-center gap-4 text-sm text-muted-foreground">
-                            <span>{getAuthorName(post.authorId)}</span>
+                            <span>{getAuthorName(post.author_id || (post as any).authorId)}</span>
                             <span>•</span>
                             <time dateTime={post.created_at.toISOString()}>{format(new Date(post.created_at), 'MMMM d, yyyy')}</time>
                         </div>

@@ -25,6 +25,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 // Import an icon.
 import { ArrowLeft } from 'lucide-react';
+import { uploadImage } from '@/lib/storage';
+import { useAuth } from '@/hooks/use-auth';
 
 // The main component for the Edit Post page.
 export default function EditPostPage() {
@@ -35,6 +37,7 @@ export default function EditPostPage() {
   const { id } = params;
   // Get the toast function for user feedback.
   const { toast } = useToast();
+  const { user } = useAuth();
   
   // State to hold the full post object being edited.
   const [post, setPost] = useState<Post | null>(null);
@@ -42,6 +45,7 @@ export default function EditPostPage() {
   const [title, setTitle] = useState('');
   const [excerpt, setExcerpt] = useState('');
   const [content, setContent] = useState('');
+  const [imageFile, setImageFile] = useState<File | null>(null);
   // State to hold the preview URL for a newly selected image file.
   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
@@ -62,7 +66,7 @@ export default function EditPostPage() {
           setTitle(postToEdit.title);
           setExcerpt(postToEdit.excerpt);
           setContent(postToEdit.content);
-          setImagePreview(postToEdit.featured_img);
+          setImagePreview(postToEdit.featuredImgUrl);
         } else {
           // If no post is found, show an error toast and redirect the user back to the main posts list.
           toast({
@@ -82,6 +86,7 @@ export default function EditPostPage() {
     // Check if a file was selected.
     if (e.target.files && e.target.files[0]) {
         const file = e.target.files[0];
+        setImageFile(file);
         // In a real application, you would start the upload process here.
         // For this mock setup, we use `URL.createObjectURL` to generate a temporary local URL
         // for the selected file, allowing us to show a preview without an actual upload.
@@ -92,13 +97,18 @@ export default function EditPostPage() {
   // Handler for the form submission.
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault(); // Prevent the default browser form submission behavior.
-    if (post) {
+    if (post && user) {
+      let imageUrl = post.featuredImgUrl;
+      if (imageFile) {
+        const path = `posts/${user.uid}/${imageFile.name}`;
+        imageUrl = await uploadImage(imageFile, path);
+      }
       // Call the `updatePost` function from our mock data library to "save" the changes.
       await updatePostInFirestore(post.id, {
         title,
         excerpt,
         content,
-        featured_img: imagePreview || '', // Save the new image URL (or the old one if unchanged).
+        featuredImgUrl: imageUrl, // Save the new image URL (or the old one if unchanged).
       });
       // Show a success notification.
       toast({
@@ -136,7 +146,7 @@ export default function EditPostPage() {
                     <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} />
                 </div>
                 <div>
-                    <Label htmlFor="featured_img">Featured Image</Label>
+                    <Label htmlFor="featuredImgUrl">Featured Image</Label>
                     {/* Show a preview of the current featured image. */}
                     {imagePreview && (
                       <div className="mt-2 aspect-video relative rounded-md overflow-hidden">
@@ -144,7 +154,7 @@ export default function EditPostPage() {
                       </div>
                     )}
                     {/* The file input for uploading a new image. */}
-                    <Input id="featured_img" type="file" onChange={handleImageChange} className="mt-2" accept="image/png, image/jpeg" />
+                    <Input id="featuredImgUrl" type="file" onChange={handleImageChange} className="mt-2" accept="image/png, image/jpeg" />
                     <p className="text-sm text-muted-foreground mt-2">
                         Supports JPG, PNG. Max file size: 2MB. Recommended aspect ratio: 16:9.
                     </p>

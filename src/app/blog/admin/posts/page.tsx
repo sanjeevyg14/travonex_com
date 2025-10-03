@@ -16,7 +16,7 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuIte
 // Import icons.
 import { PlusCircle, MoreHorizontal, CheckCircle, XCircle, Send, Trash2, Archive, Eye } from "lucide-react";
 // Import date formatting utility.
-import { format } from 'date-fns';
+import { format, isValid } from 'date-fns';
 // Import Firestore functions.
 import { getPosts, updatePost, deletePost as deletePostFromFirestore } from '@/lib/firestore';
 import { Post } from '@/lib/types';
@@ -32,17 +32,21 @@ export default function AdminPostsPage() {
   // Using state allows the UI to update instantly when a post's status changes or it's deleted.
   const [posts, setPosts] = useState<Post[]>([]);
   // Get the current user's role to control access to actions (e.g., only admins can delete).
-  const { userRole } = useAuth();
+  const { userRole, loading } = useAuth();
   // Get the toast function for user feedback.
   const { toast } = useToast();
 
   useEffect(() => {
-    async function fetchPosts() {
-      const posts = await getPosts();
-      setPosts(posts);
+    if (loading) return;
+
+    if (userRole === 'admin' || userRole === 'editor') {
+        async function fetchPosts() {
+          const posts = await getPosts();
+          setPosts(posts);
+        }
+        fetchPosts();
     }
-    fetchPosts();
-  }, []);
+  }, [loading, userRole]);
 
   // Handler to change the status of a post (e.g., from 'pending' to 'published').
   const handleStatusChange = async (postId: string, newStatus: Post['status']) => {
@@ -89,6 +93,14 @@ export default function AdminPostsPage() {
     }
   };
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (userRole !== 'admin' && userRole !== 'editor') {
+    return <div>You do not have permission to view this page.</div>;
+  }
+
   // The JSX for the page layout.
   return (
     <Card>
@@ -120,7 +132,11 @@ export default function AdminPostsPage() {
                 <TableCell className="font-medium">{post.title}</TableCell>
                 <TableCell>{getStatusBadge(post.status)}</TableCell>
                 <TableCell>Coming soon</TableCell>
-                <TableCell>{format(new Date(post.updated_at), 'yyyy-MM-dd')}</TableCell>
+                <TableCell>
+                  {isValid(new Date(post.updated_at))
+                    ? format(new Date(post.updated_at), 'yyyy-MM-dd')
+                    : 'Invalid date'}
+                </TableCell>
                 <TableCell className="text-right">
                     {/* The DropdownMenu component contains all actions for a single post. */}
                     <DropdownMenu>

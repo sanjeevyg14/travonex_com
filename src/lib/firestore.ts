@@ -123,6 +123,15 @@ export async function getPosts(): Promise<Post[]> {
   return postList;
 }
 
+// Fetches all posts by a specific user.
+export async function getPostsByUserId(userId: string): Promise<Post[]> {
+  const postsCol = collection(db, 'posts').withConverter(postConverter);
+  const q = query(postsCol, where('author_id', '==', userId));
+  const postSnapshot = await getDocs(q);
+  const postList = postSnapshot.docs.map(doc => doc.data() as Post);
+  return postList;
+}
+
 // Fetches all published posts from Firestore.
 export async function getPublishedPosts(): Promise<Post[]> {
     const postsCol = collection(db, 'posts').withConverter(postConverter);
@@ -178,10 +187,28 @@ export async function deletePost(id: string): Promise<void> {
 
 // --- COMMENTS ---
 
-// Fetches all comments for a given post.
+// Fetches all approved comments for a given post.
 export async function getComments(postId?: string): Promise<Comment[]> {
     const commentsCol = collection(db, 'comments').withConverter(commentConverter);
-    const q = postId ? query(commentsCol, where('postId', '==', postId)) : commentsCol;
+    
+    // Base query for approved comments
+    const approvedCommentsQuery = where('status', '==', 'approved');
+
+    // If a postId is provided, filter by both postId and status.
+    // Otherwise, just get all approved comments.
+    const q = postId 
+        ? query(commentsCol, where('postId', '==', postId), approvedCommentsQuery) 
+        : query(commentsCol, approvedCommentsQuery);
+
+    const commentSnapshot = await getDocs(q);
+    const commentList = commentSnapshot.docs.map(doc => doc.data() as Comment);
+    return commentList;
+}
+
+// Fetches all comments by a specific user.
+export async function getCommentsByUserId(userId: string): Promise<Comment[]> {
+    const commentsCol = collection(db, 'comments').withConverter(commentConverter);
+    const q = query(commentsCol, where('userId', '==', userId));
     const commentSnapshot = await getDocs(q);
     const commentList = commentSnapshot.docs.map(doc => doc.data() as Comment);
     return commentList;
@@ -209,10 +236,19 @@ export async function deleteComment(id: string): Promise<void> {
 
 // --- STORIES ---
 
-// Fetches all stories for a given post.
+// Fetches all approved stories for a given post.
 export async function getStories(postId?: string): Promise<FollowUpStory[]> {
     const storiesCol = collection(db, 'stories').withConverter(storyConverter);
-    const q = postId ? query(storiesCol, where('postId', '==', postId)) : storiesCol;
+
+    // Base query for approved stories
+    const approvedStoriesQuery = where('status', '==', 'approved');
+    
+    // If a postId is provided, filter by both postId and status.
+    // Otherwise, just get all approved stories.
+    const q = postId 
+        ? query(storiesCol, where('postId', '==', postId), approvedStoriesQuery) 
+        : query(storiesCol, approvedStoriesQuery);
+
     const storySnapshot = await getDocs(q);
     const storyList = storySnapshot.docs.map(doc => doc.data() as FollowUpStory);
     return storyList;
@@ -250,6 +286,10 @@ export async function getUsers(): Promise<User[]> {
 
 // Fetches a single user by their ID.
 export async function getUserById(id: string): Promise<User | null> {
+    // If the id is missing, we can't fetch a user.
+    if (!id) {
+        return null;
+    }
     const userDocRef = doc(db, 'users', id).withConverter(userConverter);
     const userSnap = await getDoc(userDocRef);
     if (userSnap.exists()) {
@@ -258,6 +298,27 @@ export async function getUserById(id: string): Promise<User | null> {
         return null;
     }
 }
+
+// Fetches a single user and their published posts by username.
+export async function getUserByUsername(username: string): Promise<{ user: User, posts: Post[] } | null> {
+    const usersCol = collection(db, 'users').withConverter(userConverter);
+    const q = query(usersCol, where('username', '==', username));
+    const userSnapshot = await getDocs(q);
+
+    if (userSnapshot.empty) {
+        return null;
+    }
+
+    const user = userSnapshot.docs[0].data() as User;
+    
+    const postsCol = collection(db, 'posts').withConverter(postConverter);
+    const postsQuery = query(postsCol, where('author_id', '==', user.id), where('status', '==', 'published'));
+    const postSnapshot = await getDocs(postsQuery);
+    const posts = postSnapshot.docs.map(doc => doc.data() as Post);
+
+    return { user, posts };
+}
+
 
 // --- EARLY ACCESS USERS ---
 
