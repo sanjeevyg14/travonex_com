@@ -22,6 +22,8 @@ env:
     value: "1:344710455474:web:2687b18ad1ad05b03ae9ab"
   - variable: NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
     value: "G-C6KSX10G84"
+  - variable: NEXT_PUBLIC_BASE_URL
+    value: "https://travonex.com"
 
 # Build step for Next.js
 build:
