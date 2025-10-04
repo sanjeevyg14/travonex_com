@@ -6,64 +6,68 @@ import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@
 import { Newspaper, MessageSquare, Pencil } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
-import { collection, getDocs, where, query } from 'firebase/firestore';
+import { collection, getDocs, query } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useAuth } from '@/hooks/use-auth';
 import { Post, User, Comment, FollowUpStory } from '@/lib/types';
 
-const getAuthorName = (authorId: string, users: User[]) => {
-    const user = users.find(u => u.id === authorId);
-    return user ? user.name : 'Unknown Author';
+const getAuthorName = (post: Post, users: User[]) => {
+  const authorId = post.authorId || post.author_id;
+  const user = users.find(u => u.id === authorId);
+  return user ? user.name : 'Unknown Author';
 };
 
 export default function AdminDashboard() {
-    const { user } = useAuth();
-    const [posts, setPosts] = useState<Post[]>([]);
-    const [users, setUsers] = useState<User[]>([]);
-    const [comments, setComments] = useState<Comment[]>([]);
-    const [stories, setStories] = useState<FollowUpStory[]>([]);
+  const { user } = useAuth();
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [stories, setStories] = useState<FollowUpStory[]>([]);
 
-    useEffect(() => {
-        if (!user) return;
+  useEffect(() => {
+    if (!user) return;
 
-        const fetchData = async () => {
-            const postsQuery = query(collection(db, 'posts'));
-            const postsSnapshot = await getDocs(postsQuery);
-            const postsData = postsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Post[];
-            setPosts(postsData);
-
-            const usersQuery = query(collection(db, 'users'));
-            const usersSnapshot = await getDocs(usersQuery);
-            const usersData = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as User[];
-            setUsers(usersData);
-
-            const commentsQuery = query(collection(db, 'comments'));
-            const commentsSnapshot = await getDocs(commentsQuery);
-            const commentsData = commentsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Comment[];
-            setComments(commentsData);
-
-            const storiesQuery = query(collection(db, 'stories'));
-            const storiesSnapshot = await getDocs(storiesQuery);
-            const storiesData = storiesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as FollowUpStory[];
-            setStories(storiesData);
+    const fetchData = async () => {
+      const postsSnapshot = await getDocs(query(collection(db, 'posts')));
+      const postsData = postsSnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          ...data,
+          // 🔥 normalize created_at so it's always a Date
+          created_at: data.created_at?.toDate
+            ? data.created_at.toDate()
+            : data.created_at
         };
+      }) as Post[];
+      setPosts(postsData);
 
-        fetchData();
-    }, [user]);
+      const usersSnapshot = await getDocs(query(collection(db, 'users')));
+      setUsers(usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as User[]);
 
-    const pendingPosts = posts.filter(p => p.status === 'pending');
-    const pendingCommentsCount = comments.filter(c => c.status === 'pending').length;
-    const pendingStoriesCount = stories.filter(s => s.status === 'pending').length;
+      const commentsSnapshot = await getDocs(query(collection(db, 'comments')));
+      setComments(commentsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Comment[]);
 
-    const dashboardData = {
-        totalPosts: posts.length,
-        pendingPosts: pendingPosts.length,
-        totalUsers: users.length,
-        pendingComments: pendingCommentsCount,
-        pendingStories: pendingStoriesCount,
-        recentPendingPosts: pendingPosts.slice(0, 5)
+      const storiesSnapshot = await getDocs(query(collection(db, 'stories')));
+      setStories(storiesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as FollowUpStory[]);
     };
-  
+
+    fetchData();
+  }, [user]);
+
+  const pendingPosts = posts.filter(p => p.status === 'pending');
+  const pendingCommentsCount = comments.filter(c => c.status === 'pending').length;
+  const pendingStoriesCount = stories.filter(s => s.status === 'pending').length;
+
+  const dashboardData = {
+    totalPosts: posts.length,
+    pendingPosts: pendingPosts.length,
+    totalUsers: users.length,
+    pendingComments: pendingCommentsCount,
+    pendingStories: pendingStoriesCount,
+    recentPendingPosts: pendingPosts.slice(0, 5)
+  };
+
   return (
     <div className="space-y-8">
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -104,44 +108,46 @@ export default function AdminDashboard() {
           </CardContent>
         </Card>
       </div>
-      
+
       <div>
         <Card>
-            <CardHeader>
-                <CardTitle>Recent Pending Submissions</CardTitle>
-            </CardHeader>
-            <CardContent>
-                {dashboardData.recentPendingPosts.length > 0 ? (
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>Title</TableHead>
-                                <TableHead>Status</TableHead>
-                                <TableHead>Author</TableHead>
-                                <TableHead>Date</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {dashboardData.recentPendingPosts.map(post => (
-                            <TableRow key={post.id}>
-                                    <TableCell className="font-medium">{post.title}</TableCell>
-                                    <TableCell>
-                                        <Badge variant='secondary'>
-                                            {post.status}
-                                        </Badge>
-                                    </TableCell>
-                                    <TableCell>{getAuthorName(post.authorId, users)}</TableCell>
-                                    <TableCell>{format(new Date(post.created_at), 'yyyy-MM-dd')}</TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                ) : (
-                    <div className="text-center py-12 text-muted-foreground">
-                        <p>No pending posts to review. Great job!</p>
-                    </div>
-                )}
-            </CardContent>
+          <CardHeader>
+            <CardTitle>Recent Pending Submissions</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {dashboardData.recentPendingPosts.length > 0 ? (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Title</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Author</TableHead>
+                    <TableHead>Date</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {dashboardData.recentPendingPosts.map(post => (
+                    <TableRow key={post.id}>
+                      <TableCell className="font-medium">{post.title}</TableCell>
+                      <TableCell>
+                        <Badge variant="secondary">{post.status}</Badge>
+                      </TableCell>
+                      <TableCell>{getAuthorName(post, users)}</TableCell>
+                      <TableCell>
+                        {post.created_at
+                          ? format(new Date(post.created_at), 'yyyy-M-dd')
+                          : 'N/A'}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            ) : (
+              <div className="text-center py-12 text-muted-foreground">
+                <p>No pending posts to review. Great job!</p>
+              </div>
+            )}
+          </CardContent>
         </Card>
       </div>
     </div>

@@ -23,7 +23,8 @@ export type Post = {
   slug: string; // URL-friendly version of the title.
   content: string; // The full content of the post, can include HTML.
   excerpt: string; // A short summary.
-  author_id: string; // The ID of the user who wrote the post.
+  author_id?: string; // The ID of the user who wrote the post.
+  authorId?: string;
   status: 'draft' | 'pending' | 'published' | 'rejected'; // The moderation status.
   featuredImgUrl: string; // URL for the main image.
   imageHint: string; // A hint for AI image tools.

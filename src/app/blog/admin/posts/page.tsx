@@ -18,8 +18,8 @@ import { PlusCircle, MoreHorizontal, CheckCircle, XCircle, Send, Trash2, Archive
 // Import date formatting utility.
 import { format, isValid } from 'date-fns';
 // Import Firestore functions.
-import { getPosts, updatePost, deletePost as deletePostFromFirestore } from '@/lib/firestore';
-import { Post } from '@/lib/types';
+import { getPosts, getUsers, updatePost, deletePost as deletePostFromFirestore } from '@/lib/firestore';
+import { Post, User } from '@/lib/types';
 // Import custom hooks for authentication and notifications.
 import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
@@ -31,6 +31,7 @@ export default function AdminPostsPage() {
   // State to hold the list of posts, initialized with data from the mock file.
   // Using state allows the UI to update instantly when a post's status changes or it's deleted.
   const [posts, setPosts] = useState<Post[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
   // Get the current user's role to control access to actions (e.g., only admins can delete).
   const { userRole, loading } = useAuth();
   // Get the toast function for user feedback.
@@ -40,13 +41,21 @@ export default function AdminPostsPage() {
     if (loading) return;
 
     if (userRole === 'admin' || userRole === 'editor') {
-        async function fetchPosts() {
+        async function fetchData() {
           const posts = await getPosts();
           setPosts(posts);
+          const users = await getUsers();
+          setUsers(users);
         }
-        fetchPosts();
+        fetchData();
     }
   }, [loading, userRole]);
+
+  const getAuthorName = (post: Post) => {
+    const authorId = post.authorId || post.author_id;
+    const user = users.find(u => u.id === authorId);
+    return user ? user.name : 'Unknown Author';
+  };
 
   // Handler to change the status of a post (e.g., from 'pending' to 'published').
   const handleStatusChange = async (postId: string, newStatus: Post['status']) => {
@@ -54,7 +63,7 @@ export default function AdminPostsPage() {
     await updatePost(postId, { status: newStatus });
     // Update the local `posts` state.
     setPosts(posts.map(post => 
-      post.id === postId ? { ...post, status: newStatus, updated_at: new Date() } : post
+      post.id === postId ? { ...post, status: newStatus } : post
     ));
     // Show a confirmation toast.
     toast({
@@ -131,7 +140,7 @@ export default function AdminPostsPage() {
               <TableRow key={post.id}>
                 <TableCell className="font-medium">{post.title}</TableCell>
                 <TableCell>{getStatusBadge(post.status)}</TableCell>
-                <TableCell>Coming soon</TableCell>
+                <TableCell>{getAuthorName(post)}</TableCell>
                 <TableCell>
                   {isValid(new Date(post.updated_at))
                     ? format(new Date(post.updated_at), 'yyyy-MM-dd')

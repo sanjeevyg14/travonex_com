@@ -1,16 +1,9 @@
 {
-  "/_not-found/page": "app/_not-found/page.js",
-  "/author/[username]/page": "app/author/[username]/page.js",
-  "/blog/[slug]/page": "app/blog/[slug]/page.js",
   "/blog/admin/page": "app/blog/admin/page.js",
-  "/blog/page": "app/blog/page.js",
+  "/blog/admin/posts/page": "app/blog/admin/posts/page.js",
+  "/blog/admin/users/page": "app/blog/admin/users/page.js",
   "/dashboard/page": "app/dashboard/page.js",
-  "/dashboard/posts/edit/[id]/page": "app/dashboard/posts/edit/[id]/page.js",
-  "/dashboard/profile/page": "app/dashboard/profile/page.js",
-  "/dashboard/submit/page": "app/dashboard/submit/page.js",
   "/favicon.ico/route": "app/favicon.ico/route.js",
   "/login/page": "app/login/page.js",
-  "/page": "app/page.js",
-  "/signup/page": "app/signup/page.js",
-  "/sitemap.xml/route": "app/sitemap.xml/route.js"
+  "/page": "app/page.js"
 }

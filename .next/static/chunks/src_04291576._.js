@@ -1094,7 +1094,9 @@ __turbopack_context__.s({
 });
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/jsx-dev-runtime.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$instagram$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Instagram$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/instagram.js [app-client] (ecmascript) <export default as Instagram>"); // Icons for social media links.
-var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$linkedin$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Linkedin$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/linkedin.js [app-client] (ecmascript) <export default as Linkedin>");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$youtube$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Youtube$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/youtube.js [app-client] (ecmascript) <export default as Youtube>");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$facebook$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Facebook$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/facebook.js [app-client] (ecmascript) <export default as Facebook>");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$twitter$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Twitter$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/twitter.js [app-client] (ecmascript) <export default as Twitter>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/client/app-dir/link.js [app-client] (ecmascript)"); // For client-side navigation.
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/image.js [app-client] (ecmascript)"); // For displaying images.
 ;
@@ -1105,26 +1107,75 @@ function Footer() {
     // Array of social media link objects. This makes it easy to add or remove links.
     const socialLinks = [
         {
-            icon: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$instagram$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Instagram$3e$__["Instagram"], {
+            icon: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$youtube$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Youtube$3e$__["Youtube"], {
                 className: "h-6 w-6"
             }, void 0, false, {
                 fileName: "[project]/src/components/landing/footer.tsx",
                 lineNumber: 14,
                 columnNumber: 13
             }, this),
-            href: '#',
-            'aria-label': 'Instagram'
+            href: 'https://www.youtube.com/@Travonex',
+            'aria-label': 'Youtube'
         },
         {
-            icon: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$linkedin$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Linkedin$3e$__["Linkedin"], {
+            icon: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$twitter$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Twitter$3e$__["Twitter"], {
                 className: "h-6 w-6"
             }, void 0, false, {
                 fileName: "[project]/src/components/landing/footer.tsx",
                 lineNumber: 15,
                 columnNumber: 13
             }, this),
-            href: '#',
-            'aria-label': 'LinkedIn'
+            href: 'https://www.linkedin.com/company/travonex',
+            'aria-label': 'Twitter'
+        },
+        {
+            icon: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$facebook$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Facebook$3e$__["Facebook"], {
+                className: "h-6 w-6"
+            }, void 0, false, {
+                fileName: "[project]/src/components/landing/footer.tsx",
+                lineNumber: 16,
+                columnNumber: 13
+            }, this),
+            href: 'https://www.facebook.com/profile.php?id=61581171023347',
+            'aria-label': 'Facebook'
+        },
+        {
+            icon: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$instagram$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Instagram$3e$__["Instagram"], {
+                className: "h-6 w-6"
+            }, void 0, false, {
+                fileName: "[project]/src/components/landing/footer.tsx",
+                lineNumber: 17,
+                columnNumber: 13
+            }, this),
+            href: 'https://www.instagram.com/travonex',
+            'aria-label': 'Instagram'
+        },
+        {
+            icon: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("svg", {
+                xmlns: "http://www.w3.org/2000/svg",
+                width: "24",
+                height: "24",
+                viewBox: "0 0 24 24",
+                fill: "none",
+                stroke: "currentColor",
+                strokeWidth: "2",
+                strokeLinecap: "round",
+                strokeLinejoin: "round",
+                className: "lucide lucide-whatsapp",
+                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
+                    d: "M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52s-.67-.165-.67-.165l-.67-.165s-.273-.099-.273-.099c-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164C3.06 7.843 3 8.36 3 9.382c0 1.02.53 1.903 1.255 2.585.725.682 1.59 1.164 2.39 1.475.798.312 1.48.463 2.058.463.578 0 1.157-.15 1.653-.463.497-.312.94-.788 1.255-1.475.315-.682.465-1.59.465-2.585 0-1.02-.173-1.542-.47-1.84s-.644-.448-.94-.52c-.297-.075-.67-.075-.67-.075z"
+                }, void 0, false, {
+                    fileName: "[project]/src/components/landing/footer.tsx",
+                    lineNumber: 18,
+                    columnNumber: 226
+                }, this)
+            }, void 0, false, {
+                fileName: "[project]/src/components/landing/footer.tsx",
+                lineNumber: 18,
+                columnNumber: 13
+            }, this),
+            href: 'https://wa.me/919008114928',
+            'aria-label': 'Whatsapp'
         }
     ];
     // Array of navigation link objects for the footer.
@@ -1174,12 +1225,12 @@ function Footer() {
                                         }
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/landing/footer.tsx",
-                                        lineNumber: 35,
+                                        lineNumber: 38,
                                         columnNumber: 15
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/landing/footer.tsx",
-                                    lineNumber: 34,
+                                    lineNumber: 37,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1187,13 +1238,13 @@ function Footer() {
                                     children: "Plan Less. Travel More."
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/landing/footer.tsx",
-                                    lineNumber: 37,
+                                    lineNumber: 40,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/landing/footer.tsx",
-                            lineNumber: 33,
+                            lineNumber: 36,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1204,7 +1255,7 @@ function Footer() {
                                     children: "Quick Links"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/landing/footer.tsx",
-                                    lineNumber: 42,
+                                    lineNumber: 45,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("ul", {
@@ -1216,23 +1267,23 @@ function Footer() {
                                                 children: link.label
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/landing/footer.tsx",
-                                                lineNumber: 47,
+                                                lineNumber: 50,
                                                 columnNumber: 19
                                             }, this)
                                         }, link.label, false, {
                                             fileName: "[project]/src/components/landing/footer.tsx",
-                                            lineNumber: 46,
+                                            lineNumber: 49,
                                             columnNumber: 17
                                         }, this))
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/landing/footer.tsx",
-                                    lineNumber: 43,
+                                    lineNumber: 46,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/landing/footer.tsx",
-                            lineNumber: 41,
+                            lineNumber: 44,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1243,7 +1294,7 @@ function Footer() {
                                     children: "Follow Us"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/landing/footer.tsx",
-                                    lineNumber: 57,
+                                    lineNumber: 60,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1255,24 +1306,24 @@ function Footer() {
                                             children: link.icon
                                         }, i, false, {
                                             fileName: "[project]/src/components/landing/footer.tsx",
-                                            lineNumber: 61,
+                                            lineNumber: 64,
                                             columnNumber: 17
                                         }, this))
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/landing/footer.tsx",
-                                    lineNumber: 58,
+                                    lineNumber: 61,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/landing/footer.tsx",
-                            lineNumber: 56,
+                            lineNumber: 59,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/components/landing/footer.tsx",
-                    lineNumber: 31,
+                    lineNumber: 34,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1286,38 +1337,38 @@ function Footer() {
                                     children: "Registered Office:"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/landing/footer.tsx",
-                                    lineNumber: 73,
+                                    lineNumber: 76,
                                     columnNumber: 13
                                 }, this),
                                 " Wanderlynx Labs LLP, UNIT 101, OXFORD TOWERS, 139, HAL OLD AIRPORT RD, Hulsur Bazaar, Halasuru Traffic Police Station, Bangalore North, Bangalore – 560008, Karnataka, India"
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/landing/footer.tsx",
-                            lineNumber: 72,
+                            lineNumber: 75,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                             children: "© 2025 Travonex — All rights reserved."
                         }, void 0, false, {
                             fileName: "[project]/src/components/landing/footer.tsx",
-                            lineNumber: 75,
+                            lineNumber: 78,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/components/landing/footer.tsx",
-                    lineNumber: 70,
+                    lineNumber: 73,
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/src/components/landing/footer.tsx",
-            lineNumber: 30,
+            lineNumber: 33,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/src/components/landing/footer.tsx",
-        lineNumber: 29,
+        lineNumber: 32,
         columnNumber: 5
     }, this);
 }
