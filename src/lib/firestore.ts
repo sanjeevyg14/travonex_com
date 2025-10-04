@@ -187,18 +187,18 @@ export async function deletePost(id: string): Promise<void> {
 
 // --- COMMENTS ---
 
-// Fetches all approved comments for a given post.
+// Fetches comments from Firestore.
 export async function getComments(postId?: string): Promise<Comment[]> {
     const commentsCol = collection(db, 'comments').withConverter(commentConverter);
     
-    // Base query for approved comments
-    const approvedCommentsQuery = where('status', '==', 'approved');
-
-    // If a postId is provided, filter by both postId and status.
-    // Otherwise, just get all approved comments.
-    const q = postId 
-        ? query(commentsCol, where('postId', '==', postId), approvedCommentsQuery) 
-        : query(commentsCol, approvedCommentsQuery);
+    let q;
+    // If a postId is provided, fetch approved comments for that post.
+    // Otherwise (for the admin page), fetch all comments.
+    if (postId) {
+        q = query(commentsCol, where('postId', '==', postId), where('status', '==', 'approved'));
+    } else {
+        q = query(commentsCol);
+    }
 
     const commentSnapshot = await getDocs(q);
     const commentList = commentSnapshot.docs.map(doc => doc.data() as Comment);
@@ -236,18 +236,18 @@ export async function deleteComment(id: string): Promise<void> {
 
 // --- STORIES ---
 
-// Fetches all approved stories for a given post.
+// Fetches stories from Firestore.
 export async function getStories(postId?: string): Promise<FollowUpStory[]> {
     const storiesCol = collection(db, 'stories').withConverter(storyConverter);
 
-    // Base query for approved stories
-    const approvedStoriesQuery = where('status', '==', 'approved');
-    
-    // If a postId is provided, filter by both postId and status.
-    // Otherwise, just get all approved stories.
-    const q = postId 
-        ? query(storiesCol, where('postId', '==', postId), approvedStoriesQuery) 
-        : query(storiesCol, approvedStoriesQuery);
+    let q;
+    // If a postId is provided, fetch approved stories for that post.
+    // Otherwise (for the admin page), fetch all stories.
+    if (postId) {
+        q = query(storiesCol, where('postId', '==', postId), where('status', '==', 'approved'));
+    } else {
+        q = query(storiesCol);
+    }
 
     const storySnapshot = await getDocs(q);
     const storyList = storySnapshot.docs.map(doc => doc.data() as FollowUpStory);
