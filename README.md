@@ -1,5 +1,18 @@
-# Firebase Studio
+# Travonex Launch Page 🌍
 
-This is a NextJS starter in Firebase Studio.
+This repository contains the **launch/landing page** for **Travonex**, a travel booking and aggregator platform.
 
-To get started, take a look at src/app/page.tsx.
+---
+
+## 🚀 Tech Stack
+- React.js  
+- Vite  
+- Tailwind CSS  
+
+---
+
+## ⚡ Getting Started
+1. Clone the repo  
+   ```bash
+   git clone https://github.com/sanjeevyg14/travonex_com.git
+   cd travonex_com
