@@ -104,7 +104,15 @@ export default function LoginPage() {
   // This prevents a logged-in user from seeing the login page again.
   useEffect(() => {
     if (user) {
-      router.push('/dashboard');
+      const checkUserRole = async () => {
+        const userDoc = await getUserById(user.uid);
+        if (userDoc && userDoc.role === 'admin') {
+          router.push('/blog/admin');
+        } else {
+          router.push('/dashboard');
+        }
+      };
+      checkUserRole();
     }
   }, [user, router]);
 
